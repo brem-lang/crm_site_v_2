@@ -587,6 +587,15 @@ function OrbitDecoration() {
             <circle
                 cx="300"
                 cy="300"
+                r="290"
+                fill="none"
+                stroke="url(#nullyptoOrbitGrad)"
+                strokeWidth="1"
+                strokeDasharray="1 14"
+            />
+            <circle
+                cx="300"
+                cy="300"
                 r="260"
                 fill="none"
                 stroke="url(#nullyptoOrbitGrad)"
@@ -610,11 +619,29 @@ function OrbitDecoration() {
                 stroke="url(#nullyptoOrbitGrad)"
                 strokeWidth="1"
             />
+            <circle
+                cx="300"
+                cy="300"
+                r="60"
+                fill="none"
+                stroke="url(#nullyptoOrbitGrad)"
+                strokeWidth="1"
+                strokeDasharray="3 6"
+            />
             <g className="nullypto-hero-node">
                 <circle cx="300" cy="40" r="6" fill="#C4FF48" />
             </g>
             <g className="nullypto-hero-node nullypto-hero-node-slow">
                 <circle cx="300" cy="110" r="4" fill="#3DE0C9" />
+            </g>
+            <g className="nullypto-hero-node nullypto-hero-node-fast">
+                <circle cx="300" cy="180" r="5" fill="#3DE0C9" />
+            </g>
+            <g className="nullypto-hero-node nullypto-hero-node-reverse">
+                <circle cx="300" cy="240" r="4" fill="#C4FF48" />
+            </g>
+            <g className="nullypto-hero-node nullypto-hero-node-slow">
+                <circle cx="300" cy="10" r="3" fill="#C4FF48" />
             </g>
         </svg>
     );
