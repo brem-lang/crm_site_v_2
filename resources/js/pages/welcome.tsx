@@ -342,6 +342,67 @@ const TESTIMONIAL_PEOPLE = [
 ] as const;
 
 /**
+ * Renders a stat value (e.g. "140,000", "52ms", "24/7") counting up from
+ * zero on mount — i.e. every time the page loads/refreshes, since these
+ * stats sit in the hero and are visible immediately. Only the leading
+ * number is animated; anything after it (a unit like "ms", or "/7") is
+ * kept as a static suffix.
+ */
+function CountUpStat({
+    value,
+    durationMs = 1400,
+}: {
+    value: string;
+    durationMs?: number;
+}) {
+    const match = value.match(/^([\d,]+)(.*)$/);
+    const [display, setDisplay] = useState(() =>
+        match ? `0${match[2]}` : value,
+    );
+
+    useEffect(() => {
+        if (!match) return;
+
+        const target = Number(match[1].replace(/,/g, ""));
+        const useComma = match[1].includes(",");
+        const suffix = match[2];
+
+        const prefersReducedMotion = window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+        ).matches;
+        if (prefersReducedMotion) {
+            setDisplay(
+                (useComma ? target.toLocaleString() : String(target)) +
+                    suffix,
+            );
+            return;
+        }
+
+        const start = performance.now();
+        let raf: number;
+
+        function tick(now: number) {
+            const progress = Math.min((now - start) / durationMs, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const current = Math.round(eased * target);
+            setDisplay(
+                (useComma ? current.toLocaleString() : String(current)) +
+                    suffix,
+            );
+            if (progress < 1) {
+                raf = requestAnimationFrame(tick);
+            }
+        }
+
+        raf = requestAnimationFrame(tick);
+        return () => cancelAnimationFrame(raf);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value]);
+
+    return <>{display}</>;
+}
+
+/**
  * Fades/slides its children in when they scroll into view, and back out
  * again when they scroll out — either direction (down or back up).
  */
@@ -983,6 +1044,72 @@ function SignupForm() {
     );
 }
 
+/**
+ * Urgency pop-up shown 10s after the page loads (see `Welcome`), holding a
+ * fresh copy of the sign-up form behind a countdown timer.
+ */
+function AssessmentModal({ onClose }: { onClose: () => void }) {
+    const { t } = useTranslation();
+    const [secondsLeft, setSecondsLeft] = useState(5 * 60);
+
+    // Real 5-minute countdown — closes the modal on its own once it hits 0.
+    useEffect(() => {
+        if (secondsLeft <= 0) {
+            onClose();
+            return;
+        }
+        const id = setTimeout(() => setSecondsLeft((s) => s - 1), 1000);
+        return () => clearTimeout(id);
+    }, [secondsLeft, onClose]);
+
+    useEffect(() => {
+        function handleKeyDown(event: KeyboardEvent) {
+            if (event.key === "Escape") onClose();
+        }
+        document.addEventListener("keydown", handleKeyDown);
+        return () => document.removeEventListener("keydown", handleKeyDown);
+    }, [onClose]);
+
+    const minutes = Math.floor(secondsLeft / 60);
+    const seconds = secondsLeft % 60;
+    const time = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    const [before, after] = t.exitModal.heldFor.split("{time}");
+
+    return (
+        <div
+            className="nullypto-modal-backdrop"
+            onMouseDown={(event) => {
+                if (event.target === event.currentTarget) onClose();
+            }}
+        >
+            <div
+                className="nullypto-exit-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-label={t.exitModal.heldFor.replace("{time}", time)}
+            >
+                <button
+                    type="button"
+                    className="nullypto-exit-modal-close"
+                    onClick={onClose}
+                    aria-label={t.ui.closeModalAria}
+                >
+                    ✕
+                </button>
+                <span className="nullypto-badge nullypto-exit-modal-badge">
+                    {t.exitModal.badge}
+                </span>
+                <p className="nullypto-exit-modal-timer">
+                    {before}
+                    <span className="nullypto-exit-modal-time">{time}</span>
+                    {after}
+                </p>
+                <SignupForm />
+            </div>
+        </div>
+    );
+}
+
 function Hero() {
     const { t } = useTranslation();
 
@@ -1012,7 +1139,9 @@ function Hero() {
                     <div className="nullypto-stat-row">
                         {STAT_VALUES.map((value, index) => (
                             <div className="nullypto-stat" key={value}>
-                                <h3>{value}</h3>
+                                <h3>
+                                    <CountUpStat value={value} />
+                                </h3>
                                 <span>{t.hero.stats[index]}</span>
                             </div>
                         ))}
@@ -1290,6 +1419,7 @@ export default function Welcome() {
     const { auth } = usePage().props;
     const [showRiskWarning, setShowRiskWarning] = useState(true);
     const [languageCode, setLanguageCode] = useState<LanguageCode>("en");
+    const [showAssessmentModal, setShowAssessmentModal] = useState(false);
 
     // Smooth-scroll the in-page nav/footer anchor links (#platform, #how, …).
     // Set on <html> only while this page is mounted, and restored on
@@ -1301,6 +1431,12 @@ export default function Welcome() {
         return () => {
             document.documentElement.style.scrollBehavior = previous;
         };
+    }, []);
+
+    // Show the urgency/assessment pop-up once, 10s after the page loads.
+    useEffect(() => {
+        const id = setTimeout(() => setShowAssessmentModal(true), 10000);
+        return () => clearTimeout(id);
     }, []);
 
     return (
@@ -1326,6 +1462,11 @@ export default function Welcome() {
                 <FaqSection />
                 <LegalSection />
                 <SiteFooter />
+                {showAssessmentModal && (
+                    <AssessmentModal
+                        onClose={() => setShowAssessmentModal(false)}
+                    />
+                )}
             </div>
         </LanguageContext.Provider>
     );

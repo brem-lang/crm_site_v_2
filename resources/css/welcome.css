@@ -233,7 +233,7 @@
     radial-gradient(circle at 85% 15%, rgba(61, 224, 201, 0.16), rgba(0, 0, 0, 0) 45%),
     radial-gradient(circle at 10% 90%, rgba(196, 255, 72, 0.18), rgba(0, 0, 0, 0) 40%),
     #f3f5f4;
-  padding: 96px 0 120px;
+  padding: clamp(48px, 8vh, 96px) 0 clamp(56px, 10vh, 120px);
 }
 
 .nullypto-hero-grid {
@@ -601,6 +601,8 @@
   inset: 0;
   z-index: 100;
   background: rgba(11, 15, 13, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -669,6 +671,57 @@
 .nullypto-modal-body p {
   margin: 0;
   line-height: 1.6;
+}
+
+/* exit-intent / assessment countdown modal */
+.nullypto-exit-modal {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #eef9f5;
+  border-radius: 20px;
+  padding: 28px 24px 24px;
+  box-shadow: 0 25px 60px -20px rgba(0, 0, 0, 0.45);
+}
+
+.nullypto-exit-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 14px;
+  box-shadow: 0 1px 3px rgba(16, 60, 40, 0.15);
+}
+
+.nullypto-exit-modal-close:hover {
+  color: var(--text-dark);
+}
+
+.nullypto-exit-modal-badge {
+  margin-bottom: 12px;
+}
+
+.nullypto-exit-modal-timer {
+  margin: 0 0 20px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.nullypto-exit-modal-time {
+  color: #14b8a6;
+}
+
+.nullypto-exit-modal .nullypto-signup-card {
+  box-shadow: 0 12px 30px -18px rgba(16, 60, 40, 0.25);
 }
 
 .nullypto-submit-btn {

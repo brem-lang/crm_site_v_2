@@ -136,6 +136,11 @@ export type Translation = {
         dismissRiskAria: string;
         closeModalAria: string;
     };
+    exitModal: {
+        badge: string;
+        /** `{time}` placeholder, e.g. "04:15" */
+        heldFor: string;
+    };
 };
 
 const en: Translation = {
@@ -369,6 +374,10 @@ const en: Translation = {
         noCountriesFound: "No countries found",
         dismissRiskAria: "Dismiss risk warning",
         closeModalAria: "Close",
+    },
+    exitModal: {
+        badge: "Before you go",
+        heldFor: "Your assessment slot is held for {time}",
     },
 };
 
@@ -611,6 +620,10 @@ const fr: Translation = {
         noCountriesFound: "Aucun pays trouvé",
         dismissRiskAria: "Masquer l'avertissement sur les risques",
         closeModalAria: "Fermer",
+    },
+    exitModal: {
+        badge: "Avant de partir",
+        heldFor: "Votre créneau d'évaluation est réservé pendant {time}",
     },
 };
 
