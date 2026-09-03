@@ -802,7 +802,6 @@
 .nullypto-process {
   background: var(--ink-950);
   color: #e7f7ee;
-  clip-path: polygon(0 4%, 100% 0, 100% 100%, 0 100%);
 }
 
 .nullypto-process .nullypto-section-head h2 {
@@ -822,26 +821,32 @@
 @media (min-width: 800px) {
   .nullypto-step-grid {
     grid-template-columns: repeat(4, 1fr);
+    align-items: start;
+  }
+
+  .nullypto-step-card:nth-child(even) {
+    margin-top: 32px;
   }
 }
 
 .nullypto-step-card {
   background: var(--ink-800);
-  border-radius: 16px;
-  padding: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  padding: 28px;
 }
 
 .nullypto-step-num {
-  width: 34px;
-  height: 34px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: linear-gradient(90deg, #22c55e, #22d3a8);
+  background: linear-gradient(135deg, #86efac, #22c55e);
   color: #052e16;
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .nullypto-step-card h3 {
@@ -868,6 +873,28 @@
   border-radius: 18px;
   padding: 40px;
   text-align: center;
+  overflow: hidden;
+}
+
+.nullypto-testi-slide {
+  animation: nullyptoTestiSlide 0.5s ease;
+}
+
+@keyframes nullyptoTestiSlide {
+  0% {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nullypto-testi-slide {
+    animation: none;
+  }
 }
 
 .nullypto-testi p {

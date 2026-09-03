@@ -1071,6 +1071,16 @@ function ResultsSection() {
     const testimonial = t.results.testimonials[index];
     const person = TESTIMONIAL_PEOPLE[index];
 
+    // Auto-advance the carousel; restarts the timer whenever the slide
+    // changes (including a manual dot click) so it doesn't jump right
+    // after the user picks one.
+    useEffect(() => {
+        const id = setInterval(() => {
+            setIndex((current) => (current + 1) % TESTIMONIAL_PEOPLE.length);
+        }, 6000);
+        return () => clearInterval(id);
+    }, [index]);
+
     return (
         <section className="nullypto-results" id="results">
             <div className="nullypto-wrap">
@@ -1080,14 +1090,16 @@ function ResultsSection() {
                 </Reveal>
                 <Reveal>
                     <div className="nullypto-testi">
-                        <p>&ldquo;{testimonial.quote}&rdquo;</p>
-                        <div className="nullypto-avatar-row">
-                            <div className="nullypto-avatar">
-                                {person.initials}
-                            </div>
-                            <div className="nullypto-who">
-                                <b>{person.name}</b>
-                                <span>{testimonial.role}</span>
+                        <div className="nullypto-testi-slide" key={index}>
+                            <p>&ldquo;{testimonial.quote}&rdquo;</p>
+                            <div className="nullypto-avatar-row">
+                                <div className="nullypto-avatar">
+                                    {person.initials}
+                                </div>
+                                <div className="nullypto-who">
+                                    <b>{person.name}</b>
+                                    <span>{testimonial.role}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
