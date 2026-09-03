@@ -1,0 +1,793 @@
+/* Nullypto landing page — loaded as a real stylesheet entry (see app.blade.php)
+   rather than imported from JS, so it's a blocking <link> in both dev and
+   prod and never flashes unstyled on first load. Every selector is prefixed
+   with `nullypto-` (and scoped under `.nullypto-page` for bare element
+   selectors) so nothing here can leak into the rest of the app. */
+
+.nullypto-page {
+  --green-500: #22c55e;
+  --green-400: #4ade80;
+  --mint-50: #f0fdf4;
+  --mint-100: #dcfce7;
+  --ink-950: #0b0f0d;
+  --ink-900: #121815;
+  --ink-800: #1b2420;
+  --text-dark: #0f172a;
+  --text-muted: #5b6b66;
+  --border-soft: #e3ece7;
+
+  margin: 0;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+  color: var(--text-dark);
+  background: #f3f5f4;
+  line-height: 1.5;
+}
+
+.nullypto-page a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.nullypto-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.nullypto-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: var(--mint-100);
+  color: #15803d;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid #bbf0d0;
+}
+
+.nullypto-badge-dark {
+  background: rgba(74, 222, 128, 0.12);
+  color: #86efac;
+  border-color: rgba(74, 222, 128, 0.25);
+}
+
+/* risk bar */
+.nullypto-risk-bar {
+  background: var(--ink-950);
+  color: #eafaf0;
+  font-size: 13px;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+}
+
+.nullypto-risk-bar b {
+  color: var(--green-400);
+}
+
+.nullypto-risk-bar button {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #9ca8a3;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* header */
+.nullypto-page header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.nullypto-topnav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+}
+
+.nullypto-brand {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.nullypto-navlinks {
+  display: none;
+  gap: 32px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #4b5652;
+}
+
+.nullypto-navlinks a {
+  position: relative;
+  transition: color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nullypto-navlinks a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #22c55e, #22d3a8);
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nullypto-navlinks a:hover {
+  color: var(--text-dark);
+}
+
+.nullypto-navlinks a:hover::after {
+  width: 100%;
+}
+
+.nullypto-lang {
+  display: none;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 14px;
+  background: #f8faf9;
+  color: #374151;
+}
+
+@media (min-width: 900px) {
+  .nullypto-navlinks {
+    display: flex;
+  }
+  .nullypto-lang {
+    display: inline-block;
+  }
+}
+
+/* hero */
+.nullypto-hero {
+  background:
+    radial-gradient(circle at 85% 15%, rgba(61, 224, 201, 0.16), rgba(0, 0, 0, 0) 45%),
+    radial-gradient(circle at 10% 90%, rgba(196, 255, 72, 0.18), rgba(0, 0, 0, 0) 40%),
+    #f3f5f4;
+  padding: 64px 0 80px;
+}
+
+.nullypto-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+@media (min-width: 1000px) {
+  .nullypto-hero-grid {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+}
+
+.nullypto-hero h1 {
+  font-size: 44px;
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 20px 0 20px;
+}
+
+@media (min-width: 640px) {
+  .nullypto-hero h1 {
+    font-size: 56px;
+  }
+}
+
+.nullypto-accent {
+  background: linear-gradient(90deg, #16a34a, #22d3a8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.nullypto-lead {
+  font-size: 17px;
+  color: var(--text-muted);
+  max-width: 520px;
+  margin-bottom: 28px;
+}
+
+.nullypto-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 40px;
+}
+
+.nullypto-btn {
+  padding: 14px 28px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+}
+
+.nullypto-btn-primary {
+  background: linear-gradient(90deg, #22c55e, #22d3a8);
+  color: #052e16;
+}
+
+.nullypto-btn-outline {
+  background: #fff;
+  border: 1.5px solid #d6ded9;
+  color: var(--text-dark);
+}
+
+.nullypto-stat-row {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.nullypto-stat h3 {
+  font-size: 28px;
+  margin: 0;
+  font-weight: 800;
+}
+
+.nullypto-stat span {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* hero orbit decoration */
+.nullypto-hero-orbit-wrap {
+  position: relative;
+}
+
+.nullypto-hero-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 640px;
+  height: 640px;
+  max-width: 130%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.nullypto-hero-node {
+  transform-origin: 300px 300px;
+  animation: nullyptoOrbit 18s linear infinite;
+}
+
+.nullypto-hero-node-slow {
+  animation: nullyptoOrbit 30s linear infinite reverse;
+}
+
+@keyframes nullyptoOrbit {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* signup card */
+.nullypto-signup-card {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border: 1px solid var(--border-soft);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 20px 50px -20px rgba(16, 60, 40, 0.25);
+}
+
+.nullypto-signup-card h2 {
+  margin: 0 0 4px;
+  font-size: 26px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #16a34a, #22d3a8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.nullypto-signup-card > p {
+  margin: 0 0 22px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.nullypto-field {
+  margin-bottom: 16px;
+}
+
+.nullypto-field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.nullypto-field input,
+.nullypto-field select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  font-size: 14px;
+  background: #f8faf9;
+  font-family: inherit;
+}
+
+.nullypto-field input:focus,
+.nullypto-field select:focus {
+  outline: 2px solid #86efac;
+  background: #fff;
+}
+
+.nullypto-phone-row {
+  display: flex;
+  gap: 8px;
+}
+
+.nullypto-phone-row select {
+  flex: 0 0 92px;
+}
+
+.nullypto-terms-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+.nullypto-terms-row a {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.nullypto-submit-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  background: linear-gradient(90deg, #22c55e, #22d3a8);
+  color: #052e16;
+  font-family: inherit;
+}
+
+.nullypto-signup-footnote {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+  font-size: 12.5px;
+  color: #4b5f57;
+}
+
+.nullypto-signup-footnote span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nullypto-page section {
+  padding: 88px 0;
+}
+
+.nullypto-section-head {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 48px;
+}
+
+.nullypto-section-head h2 {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 16px 0 12px;
+}
+
+@media (min-width: 640px) {
+  .nullypto-section-head h2 {
+    font-size: 40px;
+  }
+}
+
+.nullypto-section-head p {
+  color: var(--text-muted);
+  font-size: 16px;
+}
+
+.nullypto-platform {
+  background: #fff;
+}
+
+.nullypto-card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 700px) {
+  .nullypto-card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.nullypto-p-card {
+  background: #fff;
+  border: 1px solid var(--border-soft);
+  border-radius: 16px;
+  padding: 28px;
+}
+
+.nullypto-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--mint-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  font-size: 20px;
+}
+
+.nullypto-p-card h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.nullypto-p-card p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14.5px;
+}
+
+.nullypto-process {
+  background: var(--ink-950);
+  color: #e7f7ee;
+  clip-path: polygon(0 4%, 100% 0, 100% 100%, 0 100%);
+}
+
+.nullypto-process .nullypto-section-head h2 {
+  color: #fff;
+}
+
+.nullypto-process .nullypto-section-head p {
+  color: #9fb0a9;
+}
+
+.nullypto-step-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 800px) {
+  .nullypto-step-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.nullypto-step-card {
+  background: var(--ink-800);
+  border-radius: 16px;
+  padding: 26px;
+}
+
+.nullypto-step-num {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #22c55e, #22d3a8);
+  color: #052e16;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.nullypto-step-card h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.nullypto-step-card p {
+  margin: 0;
+  font-size: 14px;
+  color: #9fb0a9;
+}
+
+.nullypto-results {
+  background: #f6faf7;
+}
+
+.nullypto-testi {
+  max-width: 640px;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid var(--border-soft);
+  border-radius: 18px;
+  padding: 40px;
+  text-align: center;
+}
+
+.nullypto-testi p {
+  font-size: 19px;
+  font-weight: 500;
+  color: #1f2a26;
+  margin: 0 0 24px;
+}
+
+.nullypto-avatar-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.nullypto-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--mint-100);
+  color: #15803d;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.nullypto-who {
+  text-align: left;
+}
+
+.nullypto-who b {
+  display: block;
+  font-size: 14px;
+}
+
+.nullypto-who span {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.nullypto-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 26px;
+}
+
+.nullypto-dots button {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background: #d8e2dc;
+  cursor: pointer;
+  padding: 0;
+}
+
+.nullypto-dots button.nullypto-active {
+  width: 24px;
+  border-radius: 6px;
+  background: var(--green-500);
+}
+
+.nullypto-faq {
+  background: #fff;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.nullypto-faq-item {
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.nullypto-faq-q {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 22px 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-dark);
+  font-family: inherit;
+}
+
+.nullypto-faq-q .nullypto-plus {
+  font-size: 20px;
+  color: #16a34a;
+  transition: transform 0.2s;
+}
+
+.nullypto-faq-item.nullypto-open .nullypto-plus {
+  transform: rotate(45deg);
+}
+
+.nullypto-faq-a {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.25s ease;
+  color: var(--text-muted);
+  font-size: 14.5px;
+}
+
+.nullypto-faq-item.nullypto-open .nullypto-faq-a {
+  grid-template-rows: 1fr;
+}
+
+.nullypto-faq-a-inner {
+  overflow: hidden;
+}
+
+.nullypto-faq-a p {
+  margin: 0 0 20px;
+  padding-right: 20px;
+}
+
+.nullypto-legal {
+  background: var(--ink-950);
+  color: #e7f7ee;
+}
+
+.nullypto-legal .nullypto-section-head h2 {
+  color: #fff;
+}
+
+.nullypto-legal-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 800px) {
+  .nullypto-legal-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.nullypto-legal-card {
+  background: var(--ink-800);
+  border-radius: 14px;
+  padding: 26px;
+}
+
+.nullypto-legal-card h3 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--green-400);
+}
+
+.nullypto-legal-card p {
+  margin: 0;
+  font-size: 13.5px;
+  color: #a9b7b1;
+}
+
+.nullypto-page footer {
+  background: #050706;
+  color: #c7d3ce;
+  padding: 64px 0 28px;
+}
+
+.nullypto-foot-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 36px;
+}
+
+@media (min-width: 800px) {
+  .nullypto-foot-grid {
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  }
+}
+
+.nullypto-foot-brand .nullypto-brand {
+  color: #fff;
+}
+
+.nullypto-foot-brand p {
+  color: #8b9a94;
+  font-size: 14px;
+  max-width: 280px;
+  margin: 14px 0 20px;
+}
+
+.nullypto-social {
+  display: flex;
+  gap: 10px;
+}
+
+.nullypto-social a {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #2a332e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.nullypto-foot-col h4 {
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  color: #7c8b85;
+  margin: 0 0 16px;
+}
+
+.nullypto-foot-col a {
+  display: block;
+  font-size: 14.5px;
+  color: #c7d3ce;
+  margin-bottom: 12px;
+}
+
+.nullypto-foot-col a:hover {
+  color: #fff;
+}
+
+.nullypto-foot-bottom {
+  border-top: 1px solid #1c2420;
+  margin-top: 44px;
+  padding-top: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12.5px;
+  color: #78877f;
+}
+
+.nullypto-dashboard-link {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.nullypto-dashboard-link:hover {
+  text-decoration: underline;
+}
