@@ -1,13 +1,7 @@
 import { dashboard } from "@/routes";
 import { Head, Link, usePage } from "@inertiajs/react";
 import { Atom, BarChart3, Lock, Monitor, TrendingUp, Zap } from "lucide-react";
-import {
-    createContext,
-    useContext,
-    useEffect,
-    useRef,
-    useState,
-} from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import {
     getTranslation,
     LANGUAGE_OPTIONS,
@@ -332,7 +326,14 @@ const NAV_HREFS = ["#platform", "#how", "#results", "#faq", "#legal"] as const;
 
 const STAT_VALUES = ["140,000", "52ms", "24/7"] as const;
 
-const PLATFORM_FEATURE_ICONS = [Atom, TrendingUp, BarChart3, Zap, Monitor, Lock];
+const PLATFORM_FEATURE_ICONS = [
+    Atom,
+    TrendingUp,
+    BarChart3,
+    Zap,
+    Monitor,
+    Lock,
+];
 
 const TESTIMONIAL_PEOPLE = [
     { name: "Renata M.", initials: "RM" },
@@ -372,8 +373,7 @@ function CountUpStat({
         ).matches;
         if (prefersReducedMotion) {
             setDisplay(
-                (useComma ? target.toLocaleString() : String(target)) +
-                    suffix,
+                (useComma ? target.toLocaleString() : String(target)) + suffix,
             );
             return;
         }
@@ -525,7 +525,10 @@ function LanguageSelect({
                 <span className="nullypto-phone-code-caret">▾</span>
             </button>
             {open && (
-                <div className="nullypto-phone-code-panel nullypto-lang-panel" role="listbox">
+                <div
+                    className="nullypto-phone-code-panel nullypto-lang-panel"
+                    role="listbox"
+                >
                     <input
                         ref={searchRef}
                         type="text"
@@ -547,7 +550,9 @@ function LanguageSelect({
                                 role="option"
                                 aria-selected={option.code === value}
                                 className={`nullypto-phone-code-option ${
-                                    option.code === value ? "nullypto-active" : ""
+                                    option.code === value
+                                        ? "nullypto-active"
+                                        : ""
                                 }`}
                                 onClick={() => {
                                     onChange(option.code);
@@ -842,10 +847,10 @@ function Modal({
 }) {
     useEffect(() => {
         function handleKeyDown(event: KeyboardEvent) {
-            if (event.key === 'Escape') onClose();
+            if (event.key === "Escape") onClose();
         }
-        document.addEventListener('keydown', handleKeyDown);
-        return () => document.removeEventListener('keydown', handleKeyDown);
+        document.addEventListener("keydown", handleKeyDown);
+        return () => document.removeEventListener("keydown", handleKeyDown);
     }, [onClose]);
 
     return (
@@ -855,7 +860,12 @@ function Modal({
                 if (event.target === event.currentTarget) onClose();
             }}
         >
-            <div className="nullypto-modal" role="dialog" aria-modal="true" aria-label={title}>
+            <div
+                className="nullypto-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-label={title}
+            >
                 <div className="nullypto-modal-header">
                     <h3>{title}</h3>
                     <button
@@ -1390,8 +1400,8 @@ function SiteFooter() {
                     </div>
                     <div className="nullypto-foot-col">
                         <h4>{t.footer.contactColHeader}</h4>
-                        <a href="mailto:support@nullyptoai.com">
-                            support@nullyptoai.com
+                        <a href="mailto:support@nullyptoai.online">
+                            support@nullyptoai.online
                         </a>
                         <span
                             style={{
@@ -1406,7 +1416,8 @@ function SiteFooter() {
                 </div>
                 <div className="nullypto-foot-bottom">
                     <span>
-                        © {new Date().getFullYear()} Nullypto. {t.footer.copyrightLine}
+                        © {new Date().getFullYear()} Nullypto.{" "}
+                        {t.footer.copyrightLine}
                     </span>
                     <span>{t.footer.disclaimer}</span>
                 </div>
