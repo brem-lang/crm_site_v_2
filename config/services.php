@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'mercari_leads' => [
+        'url' => env('MERCARI_LEADS_URL', 'https://mercarileads.online/functions/v1/submit-lead-nullypto'),
+        'api_key' => env('MERCARI_LEADS_API_KEY'),
+    ],
+
 ];

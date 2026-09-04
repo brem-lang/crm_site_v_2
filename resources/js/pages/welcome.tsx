@@ -911,6 +911,63 @@ function PrivacyModal({ onClose }: { onClose: () => void }) {
     );
 }
 
+function LeadResultModal({
+    result,
+    onClose,
+}: {
+    result: LeadResult;
+    onClose: () => void;
+}) {
+    const { t } = useTranslation();
+    const r = t.signup.result;
+
+    if (result.status === "error") {
+        return (
+            <Modal title={r.errorTitle} onClose={onClose}>
+                <p>{r.errorBody}</p>
+                <button
+                    type="button"
+                    className="nullypto-submit-btn"
+                    onClick={onClose}
+                >
+                    {r.closeButton}
+                </button>
+            </Modal>
+        );
+    }
+
+    return (
+        <Modal title={r.successTitle} onClose={onClose}>
+            <p>{r.successBody}</p>
+            {result.autologinUrl && (
+                <a
+                    href={result.autologinUrl}
+                    className="nullypto-submit-btn"
+                    style={{
+                        display: "inline-block",
+                        textAlign: "center",
+                        textDecoration: "none",
+                    }}
+                >
+                    {r.autologinCta}
+                </a>
+            )}
+        </Modal>
+    );
+}
+
+/** Reads a cookie's raw (URL-decoded) value, or null if it isn't set. */
+function getCookie(name: string): string | null {
+    const match = document.cookie.match(
+        new RegExp(`(?:^|; )${name}=([^;]*)`),
+    );
+    return match ? decodeURIComponent(match[1]) : null;
+}
+
+type LeadResult =
+    | { status: "success"; autologinUrl: string | null }
+    | { status: "error" };
+
 function SignupForm() {
     const { t } = useTranslation();
     const [countryCode, setCountryCode] = useState("PH");
@@ -918,6 +975,11 @@ function SignupForm() {
     const [phoneError, setPhoneError] = useState<string | null>(null);
     const [termsOpen, setTermsOpen] = useState(false);
     const [privacyOpen, setPrivacyOpen] = useState(false);
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [email, setEmail] = useState("");
+    const [submitting, setSubmitting] = useState(false);
+    const [leadResult, setLeadResult] = useState<LeadResult | null>(null);
     const countryTouchedRef = useRef(false);
 
     // Detect the visitor's country from their IP address and use it to
@@ -926,17 +988,28 @@ function SignupForm() {
         const controller = new AbortController();
 
         fetch("https://ipapi.co/json/", { signal: controller.signal })
-            .then((response) => (response.ok ? response.json() : null))
+            .then((response) => {
+                console.log("[ip-country] response status:", response.status);
+                return response.ok ? response.json() : null;
+            })
             .then((data: { country_code?: string } | null) => {
+                console.log("[ip-country] response body:", data);
                 if (!data?.country_code || countryTouchedRef.current) return;
 
                 const detected = data.country_code.toUpperCase();
                 const isKnownCountry = COUNTRIES.some(
                     (country) => country.code === detected,
                 );
+                console.log(
+                    "[ip-country] detected:",
+                    detected,
+                    "known:",
+                    isKnownCountry,
+                );
                 if (isKnownCountry) setCountryCode(detected);
             })
-            .catch(() => {
+            .catch((err) => {
+                console.error("[ip-country] lookup failed:", err);
                 // Ignore lookup failures (offline, blocked, rate-limited)
                 // and keep the default country selection.
             });
@@ -961,7 +1034,37 @@ function SignupForm() {
                 setPhoneError(error);
                 if (error) return;
 
-                alert(t.signup.demoAlert);
+                setSubmitting(true);
+                setLeadResult(null);
+
+                fetch("/submit-lead", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Accept: "application/json",
+                        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") ?? "",
+                    },
+                    body: JSON.stringify({
+                        firstname: firstName,
+                        lastname: lastName,
+                        email,
+                        mobile: phoneValue.replace(/\D/g, ""),
+                        country_code: countryCode,
+                    }),
+                })
+                    .then(async (response) => {
+                        const body = await response.json().catch(() => null);
+                        if (!response.ok || !body?.success) {
+                            setLeadResult({ status: "error" });
+                            return;
+                        }
+                        setLeadResult({
+                            status: "success",
+                            autologinUrl: body.autologin_url ?? null,
+                        });
+                    })
+                    .catch(() => setLeadResult({ status: "error" }))
+                    .finally(() => setSubmitting(false));
             }}
         >
             <h2>{t.signup.title}</h2>
@@ -972,6 +1075,8 @@ function SignupForm() {
                     type="text"
                     placeholder={t.signup.firstNamePlaceholder}
                     required
+                    value={firstName}
+                    onChange={(event) => setFirstName(event.target.value)}
                 />
             </div>
             <div className="nullypto-field">
@@ -980,6 +1085,8 @@ function SignupForm() {
                     type="text"
                     placeholder={t.signup.lastNamePlaceholder}
                     required
+                    value={lastName}
+                    onChange={(event) => setLastName(event.target.value)}
                 />
             </div>
             <div className="nullypto-field">
@@ -988,6 +1095,8 @@ function SignupForm() {
                     type="email"
                     placeholder={t.signup.emailPlaceholder}
                     required
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
                 />
             </div>
             <div className="nullypto-field">
@@ -1068,14 +1177,24 @@ function SignupForm() {
             {privacyOpen && (
                 <PrivacyModal onClose={() => setPrivacyOpen(false)} />
             )}
-            <button className="nullypto-submit-btn" type="submit">
-                {t.signup.submit}
+            <button
+                className="nullypto-submit-btn"
+                type="submit"
+                disabled={submitting}
+            >
+                {submitting ? t.signup.result.submitting : t.signup.submit}
             </button>
             <div className="nullypto-signup-footnote">
                 <span>✓ {t.signup.footnotes[0]}</span>
                 <span>✓ {t.signup.footnotes[1]}</span>
                 <span>✓ {t.signup.footnotes[2]}</span>
             </div>
+            {leadResult && (
+                <LeadResultModal
+                    result={leadResult}
+                    onClose={() => setLeadResult(null)}
+                />
+            )}
         </form>
     );
 }

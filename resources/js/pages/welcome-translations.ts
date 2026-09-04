@@ -71,7 +71,6 @@ export type Translation = {
         privacyLink: string;
         submit: string;
         footnotes: [string, string, string];
-        demoAlert: string;
         errors: {
             required: string;
             digitsOnly: string;
@@ -79,6 +78,15 @@ export type Translation = {
             invalidExact: string;
             /** `{min}` / `{max}` placeholders */
             invalidRange: string;
+        };
+        result: {
+            submitting: string;
+            successTitle: string;
+            successBody: string;
+            autologinCta: string;
+            errorTitle: string;
+            errorBody: string;
+            closeButton: string;
         };
     };
     platform: {
@@ -185,13 +193,23 @@ const en: Translation = {
             "Withdraw anytime",
             "Secure & encrypted",
         ],
-        demoAlert: "Demo form — connect this to your signup backend.",
         errors: {
             required: "Phone number is required.",
             digitsOnly: "Phone number can only contain digits.",
             invalidExact: "Enter a valid {n}-digit phone number for this country.",
             invalidRange:
                 "Enter a valid phone number ({min}-{max} digits) for this country.",
+        },
+        result: {
+            submitting: "Submitting your information…",
+            successTitle: "You're in!",
+            successBody:
+                "Your details were submitted successfully. Use the link below to access your account.",
+            autologinCta: "Go to your account",
+            errorTitle: "Something went wrong",
+            errorBody:
+                "We could not submit your information right now. Please try again in a moment.",
+            closeButton: "Close",
         },
     },
     platform: {
@@ -423,8 +441,6 @@ const fr: Translation = {
             "Retrait à tout moment",
             "Sécurisé et chiffré",
         ],
-        demoAlert:
-            "Formulaire de démonstration — connectez-le à votre backend d'inscription.",
         errors: {
             required: "Le numéro de téléphone est requis.",
             digitsOnly: "Le numéro de téléphone ne peut contenir que des chiffres.",
@@ -432,6 +448,17 @@ const fr: Translation = {
                 "Saisissez un numéro de téléphone valide à {n} chiffres pour ce pays.",
             invalidRange:
                 "Saisissez un numéro de téléphone valide ({min}-{max} chiffres) pour ce pays.",
+        },
+        result: {
+            submitting: "Envoi de vos informations…",
+            successTitle: "Vous êtes inscrit(e) !",
+            successBody:
+                "Vos informations ont été envoyées avec succès. Utilisez le lien ci-dessous pour accéder à votre compte.",
+            autologinCta: "Accéder à mon compte",
+            errorTitle: "Une erreur est survenue",
+            errorBody:
+                "Nous n'avons pas pu envoyer vos informations pour le moment. Veuillez réessayer dans un instant.",
+            closeButton: "Fermer",
         },
     },
     platform: {

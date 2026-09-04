@@ -1,0 +1,18 @@
+POST https://mercarileads.online/functions/v1/submit-lead-nullypto
+Api-Key: <affiliate's api_key>
+Content-Type: application/json
+
+{
+"firstname": "John",
+"lastname": "Doe",
+"email": "john@example.com",
+"mobile": "5551234567",
+"country_code": "US",
+"ip_address": "1.2.3.4"
+}
+
+so this will be the endpoint in the form
+
+api_key= dc73a580-14df-4613-9155-310fcde4832b
+
+then display in the modal the response
