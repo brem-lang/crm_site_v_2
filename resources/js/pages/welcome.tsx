@@ -918,6 +918,31 @@ function SignupForm() {
     const [phoneError, setPhoneError] = useState<string | null>(null);
     const [termsOpen, setTermsOpen] = useState(false);
     const [privacyOpen, setPrivacyOpen] = useState(false);
+    const countryTouchedRef = useRef(false);
+
+    // Detect the visitor's country from their IP address and use it to
+    // preselect the phone dial code, unless they've already picked one.
+    useEffect(() => {
+        const controller = new AbortController();
+
+        fetch("https://ipapi.co/json/", { signal: controller.signal })
+            .then((response) => (response.ok ? response.json() : null))
+            .then((data: { country_code?: string } | null) => {
+                if (!data?.country_code || countryTouchedRef.current) return;
+
+                const detected = data.country_code.toUpperCase();
+                const isKnownCountry = COUNTRIES.some(
+                    (country) => country.code === detected,
+                );
+                if (isKnownCountry) setCountryCode(detected);
+            })
+            .catch(() => {
+                // Ignore lookup failures (offline, blocked, rate-limited)
+                // and keep the default country selection.
+            });
+
+        return () => controller.abort();
+    }, []);
 
     const phonePlaceholder =
         PHONE_PLACEHOLDER_BY_COUNTRY[countryCode] ?? DEFAULT_PHONE_PLACEHOLDER;
@@ -971,6 +996,7 @@ function SignupForm() {
                     <PhoneCountryCodeSelect
                         value={countryCode}
                         onChange={(nextCode) => {
+                            countryTouchedRef.current = true;
                             setCountryCode(nextCode);
                             if (phoneError) {
                                 setPhoneError(
