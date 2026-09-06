@@ -11,16 +11,17 @@ class BlockDisabledAuthRoutes
     /**
      * Handle an incoming request.
      *
-     * Login and registration have been disabled for this application.
-     * These routes are provided by Laravel Fortify and can't be removed
-     * from config alone, so we intercept them here and 404 instead.
+     * Public self-registration has been disabled for this application —
+     * accounts are created by an administrator via the admin panel instead.
+     * Registration is provided by Laravel Fortify and can't be removed from
+     * config alone, so we intercept it here and 404 instead.
      *
-     * Left open in local development so password login can be tested
-     * (e.g. for the admin panel) without a passkey already enrolled.
+     * Login stays open in every environment: administrators need it to
+     * sign in and reach the admin panel in production, not just locally.
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! app()->environment('local') && $request->is('login', 'register')) {
+        if ($request->is('register')) {
             abort(404);
         }
 
