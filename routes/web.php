@@ -3,15 +3,8 @@
 use App\Http\Controllers\SubmitLeadController;
 use Illuminate\Support\Facades\Route;
 
-// Normal homepage → welcome.tsx
-Route::inertia('/nullypto', 'welcome')->name('home');
-
-// Random redirect
-Route::get('/', function () {
-    return rand(0, 1)
-        ? redirect('/articles')
-        : redirect('/prime-zone');
-})->name('landing');
+// Welcome page
+Route::inertia('/', 'welcome')->name('home');
 
 Route::post('/submit-lead', [SubmitLeadController::class, 'store'])
     ->middleware('throttle:10,1')
