@@ -1,212 +1,212 @@
-import { dashboard } from "@/routes";
-import { Head, Link, usePage } from "@inertiajs/react";
-import { Atom, BarChart3, Lock, Monitor, TrendingUp, Zap } from "lucide-react";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { dashboard } from '@/routes';
+import { Head, Link, usePage } from '@inertiajs/react';
+import { Atom, BarChart3, Lock, Monitor, TrendingUp, Zap } from 'lucide-react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import {
     getTranslation,
     LANGUAGE_OPTIONS,
     type LanguageCode,
     type Translation,
-} from "./welcome-translations";
+} from './welcome-translations';
 
 const COUNTRIES: { name: string; code: string; dial: string }[] = [
-    { name: "Afghanistan", code: "AF", dial: "+93" },
-    { name: "Albania", code: "AL", dial: "+355" },
-    { name: "Algeria", code: "DZ", dial: "+213" },
-    { name: "Andorra", code: "AD", dial: "+376" },
-    { name: "Angola", code: "AO", dial: "+244" },
-    { name: "Argentina", code: "AR", dial: "+54" },
-    { name: "Armenia", code: "AM", dial: "+374" },
-    { name: "Australia", code: "AU", dial: "+61" },
-    { name: "Austria", code: "AT", dial: "+43" },
-    { name: "Azerbaijan", code: "AZ", dial: "+994" },
-    { name: "Bahamas", code: "BS", dial: "+1" },
-    { name: "Bahrain", code: "BH", dial: "+973" },
-    { name: "Bangladesh", code: "BD", dial: "+880" },
-    { name: "Barbados", code: "BB", dial: "+1" },
-    { name: "Belarus", code: "BY", dial: "+375" },
-    { name: "Belgium", code: "BE", dial: "+32" },
-    { name: "Belize", code: "BZ", dial: "+501" },
-    { name: "Benin", code: "BJ", dial: "+229" },
-    { name: "Bhutan", code: "BT", dial: "+975" },
-    { name: "Bolivia", code: "BO", dial: "+591" },
-    { name: "Bosnia and Herzegovina", code: "BA", dial: "+387" },
-    { name: "Botswana", code: "BW", dial: "+267" },
-    { name: "Brazil", code: "BR", dial: "+55" },
-    { name: "Brunei", code: "BN", dial: "+673" },
-    { name: "Bulgaria", code: "BG", dial: "+359" },
-    { name: "Burkina Faso", code: "BF", dial: "+226" },
-    { name: "Burundi", code: "BI", dial: "+257" },
-    { name: "Cambodia", code: "KH", dial: "+855" },
-    { name: "Cameroon", code: "CM", dial: "+237" },
-    { name: "Canada", code: "CA", dial: "+1" },
-    { name: "Cape Verde", code: "CV", dial: "+238" },
-    { name: "Central African Republic", code: "CF", dial: "+236" },
-    { name: "Chad", code: "TD", dial: "+235" },
-    { name: "Chile", code: "CL", dial: "+56" },
-    { name: "China", code: "CN", dial: "+86" },
-    { name: "Colombia", code: "CO", dial: "+57" },
-    { name: "Comoros", code: "KM", dial: "+269" },
-    { name: "Congo (DRC)", code: "CD", dial: "+243" },
-    { name: "Congo (Republic)", code: "CG", dial: "+242" },
-    { name: "Costa Rica", code: "CR", dial: "+506" },
-    { name: "Côte d'Ivoire", code: "CI", dial: "+225" },
-    { name: "Croatia", code: "HR", dial: "+385" },
-    { name: "Cuba", code: "CU", dial: "+53" },
-    { name: "Cyprus", code: "CY", dial: "+357" },
-    { name: "Czech Republic", code: "CZ", dial: "+420" },
-    { name: "Denmark", code: "DK", dial: "+45" },
-    { name: "Djibouti", code: "DJ", dial: "+253" },
-    { name: "Dominica", code: "DM", dial: "+1" },
-    { name: "Dominican Republic", code: "DO", dial: "+1" },
-    { name: "Ecuador", code: "EC", dial: "+593" },
-    { name: "Egypt", code: "EG", dial: "+20" },
-    { name: "El Salvador", code: "SV", dial: "+503" },
-    { name: "Equatorial Guinea", code: "GQ", dial: "+240" },
-    { name: "Eritrea", code: "ER", dial: "+291" },
-    { name: "Estonia", code: "EE", dial: "+372" },
-    { name: "Eswatini", code: "SZ", dial: "+268" },
-    { name: "Ethiopia", code: "ET", dial: "+251" },
-    { name: "Fiji", code: "FJ", dial: "+679" },
-    { name: "Finland", code: "FI", dial: "+358" },
-    { name: "France", code: "FR", dial: "+33" },
-    { name: "Gabon", code: "GA", dial: "+241" },
-    { name: "Gambia", code: "GM", dial: "+220" },
-    { name: "Georgia", code: "GE", dial: "+995" },
-    { name: "Germany", code: "DE", dial: "+49" },
-    { name: "Ghana", code: "GH", dial: "+233" },
-    { name: "Greece", code: "GR", dial: "+30" },
-    { name: "Grenada", code: "GD", dial: "+1" },
-    { name: "Guatemala", code: "GT", dial: "+502" },
-    { name: "Guinea", code: "GN", dial: "+224" },
-    { name: "Guinea-Bissau", code: "GW", dial: "+245" },
-    { name: "Guyana", code: "GY", dial: "+592" },
-    { name: "Haiti", code: "HT", dial: "+509" },
-    { name: "Honduras", code: "HN", dial: "+504" },
-    { name: "Hong Kong", code: "HK", dial: "+852" },
-    { name: "Hungary", code: "HU", dial: "+36" },
-    { name: "Iceland", code: "IS", dial: "+354" },
-    { name: "India", code: "IN", dial: "+91" },
-    { name: "Indonesia", code: "ID", dial: "+62" },
-    { name: "Iran", code: "IR", dial: "+98" },
-    { name: "Iraq", code: "IQ", dial: "+964" },
-    { name: "Ireland", code: "IE", dial: "+353" },
-    { name: "Israel", code: "IL", dial: "+972" },
-    { name: "Italy", code: "IT", dial: "+39" },
-    { name: "Jamaica", code: "JM", dial: "+1" },
-    { name: "Japan", code: "JP", dial: "+81" },
-    { name: "Jordan", code: "JO", dial: "+962" },
-    { name: "Kazakhstan", code: "KZ", dial: "+7" },
-    { name: "Kenya", code: "KE", dial: "+254" },
-    { name: "Kiribati", code: "KI", dial: "+686" },
-    { name: "Kuwait", code: "KW", dial: "+965" },
-    { name: "Kyrgyzstan", code: "KG", dial: "+996" },
-    { name: "Laos", code: "LA", dial: "+856" },
-    { name: "Latvia", code: "LV", dial: "+371" },
-    { name: "Lebanon", code: "LB", dial: "+961" },
-    { name: "Lesotho", code: "LS", dial: "+266" },
-    { name: "Liberia", code: "LR", dial: "+231" },
-    { name: "Libya", code: "LY", dial: "+218" },
-    { name: "Liechtenstein", code: "LI", dial: "+423" },
-    { name: "Lithuania", code: "LT", dial: "+370" },
-    { name: "Luxembourg", code: "LU", dial: "+352" },
-    { name: "Macau", code: "MO", dial: "+853" },
-    { name: "Madagascar", code: "MG", dial: "+261" },
-    { name: "Malawi", code: "MW", dial: "+265" },
-    { name: "Malaysia", code: "MY", dial: "+60" },
-    { name: "Maldives", code: "MV", dial: "+960" },
-    { name: "Mali", code: "ML", dial: "+223" },
-    { name: "Malta", code: "MT", dial: "+356" },
-    { name: "Marshall Islands", code: "MH", dial: "+692" },
-    { name: "Mauritania", code: "MR", dial: "+222" },
-    { name: "Mauritius", code: "MU", dial: "+230" },
-    { name: "Mexico", code: "MX", dial: "+52" },
-    { name: "Micronesia", code: "FM", dial: "+691" },
-    { name: "Moldova", code: "MD", dial: "+373" },
-    { name: "Monaco", code: "MC", dial: "+377" },
-    { name: "Mongolia", code: "MN", dial: "+976" },
-    { name: "Montenegro", code: "ME", dial: "+382" },
-    { name: "Morocco", code: "MA", dial: "+212" },
-    { name: "Mozambique", code: "MZ", dial: "+258" },
-    { name: "Myanmar", code: "MM", dial: "+95" },
-    { name: "Namibia", code: "NA", dial: "+264" },
-    { name: "Nauru", code: "NR", dial: "+674" },
-    { name: "Nepal", code: "NP", dial: "+977" },
-    { name: "Netherlands", code: "NL", dial: "+31" },
-    { name: "New Zealand", code: "NZ", dial: "+64" },
-    { name: "Nicaragua", code: "NI", dial: "+505" },
-    { name: "Niger", code: "NE", dial: "+227" },
-    { name: "Nigeria", code: "NG", dial: "+234" },
-    { name: "North Korea", code: "KP", dial: "+850" },
-    { name: "North Macedonia", code: "MK", dial: "+389" },
-    { name: "Norway", code: "NO", dial: "+47" },
-    { name: "Oman", code: "OM", dial: "+968" },
-    { name: "Pakistan", code: "PK", dial: "+92" },
-    { name: "Palau", code: "PW", dial: "+680" },
-    { name: "Palestine", code: "PS", dial: "+970" },
-    { name: "Panama", code: "PA", dial: "+507" },
-    { name: "Papua New Guinea", code: "PG", dial: "+675" },
-    { name: "Paraguay", code: "PY", dial: "+595" },
-    { name: "Peru", code: "PE", dial: "+51" },
-    { name: "Philippines", code: "PH", dial: "+63" },
-    { name: "Poland", code: "PL", dial: "+48" },
-    { name: "Portugal", code: "PT", dial: "+351" },
-    { name: "Qatar", code: "QA", dial: "+974" },
-    { name: "Romania", code: "RO", dial: "+40" },
-    { name: "Russia", code: "RU", dial: "+7" },
-    { name: "Rwanda", code: "RW", dial: "+250" },
-    { name: "Saint Kitts and Nevis", code: "KN", dial: "+1" },
-    { name: "Saint Lucia", code: "LC", dial: "+1" },
-    { name: "Saint Vincent and the Grenadines", code: "VC", dial: "+1" },
-    { name: "Samoa", code: "WS", dial: "+685" },
-    { name: "San Marino", code: "SM", dial: "+378" },
-    { name: "Sao Tome and Principe", code: "ST", dial: "+239" },
-    { name: "Saudi Arabia", code: "SA", dial: "+966" },
-    { name: "Senegal", code: "SN", dial: "+221" },
-    { name: "Serbia", code: "RS", dial: "+381" },
-    { name: "Seychelles", code: "SC", dial: "+248" },
-    { name: "Sierra Leone", code: "SL", dial: "+232" },
-    { name: "Singapore", code: "SG", dial: "+65" },
-    { name: "Slovakia", code: "SK", dial: "+421" },
-    { name: "Slovenia", code: "SI", dial: "+386" },
-    { name: "Solomon Islands", code: "SB", dial: "+677" },
-    { name: "Somalia", code: "SO", dial: "+252" },
-    { name: "South Africa", code: "ZA", dial: "+27" },
-    { name: "South Korea", code: "KR", dial: "+82" },
-    { name: "South Sudan", code: "SS", dial: "+211" },
-    { name: "Spain", code: "ES", dial: "+34" },
-    { name: "Sri Lanka", code: "LK", dial: "+94" },
-    { name: "Sudan", code: "SD", dial: "+249" },
-    { name: "Suriname", code: "SR", dial: "+597" },
-    { name: "Sweden", code: "SE", dial: "+46" },
-    { name: "Switzerland", code: "CH", dial: "+41" },
-    { name: "Syria", code: "SY", dial: "+963" },
-    { name: "Taiwan", code: "TW", dial: "+886" },
-    { name: "Tajikistan", code: "TJ", dial: "+992" },
-    { name: "Tanzania", code: "TZ", dial: "+255" },
-    { name: "Thailand", code: "TH", dial: "+66" },
-    { name: "Timor-Leste", code: "TL", dial: "+670" },
-    { name: "Togo", code: "TG", dial: "+228" },
-    { name: "Tonga", code: "TO", dial: "+676" },
-    { name: "Trinidad and Tobago", code: "TT", dial: "+1" },
-    { name: "Tunisia", code: "TN", dial: "+216" },
-    { name: "Turkey", code: "TR", dial: "+90" },
-    { name: "Turkmenistan", code: "TM", dial: "+993" },
-    { name: "Tuvalu", code: "TV", dial: "+688" },
-    { name: "Uganda", code: "UG", dial: "+256" },
-    { name: "Ukraine", code: "UA", dial: "+380" },
-    { name: "United Arab Emirates", code: "AE", dial: "+971" },
-    { name: "United Kingdom", code: "GB", dial: "+44" },
-    { name: "United States", code: "US", dial: "+1" },
-    { name: "Uruguay", code: "UY", dial: "+598" },
-    { name: "Uzbekistan", code: "UZ", dial: "+998" },
-    { name: "Vanuatu", code: "VU", dial: "+678" },
-    { name: "Vatican City", code: "VA", dial: "+379" },
-    { name: "Venezuela", code: "VE", dial: "+58" },
-    { name: "Vietnam", code: "VN", dial: "+84" },
-    { name: "Yemen", code: "YE", dial: "+967" },
-    { name: "Zambia", code: "ZM", dial: "+260" },
-    { name: "Zimbabwe", code: "ZW", dial: "+263" },
+    { name: 'Afghanistan', code: 'AF', dial: '+93' },
+    { name: 'Albania', code: 'AL', dial: '+355' },
+    { name: 'Algeria', code: 'DZ', dial: '+213' },
+    { name: 'Andorra', code: 'AD', dial: '+376' },
+    { name: 'Angola', code: 'AO', dial: '+244' },
+    { name: 'Argentina', code: 'AR', dial: '+54' },
+    { name: 'Armenia', code: 'AM', dial: '+374' },
+    { name: 'Australia', code: 'AU', dial: '+61' },
+    { name: 'Austria', code: 'AT', dial: '+43' },
+    { name: 'Azerbaijan', code: 'AZ', dial: '+994' },
+    { name: 'Bahamas', code: 'BS', dial: '+1' },
+    { name: 'Bahrain', code: 'BH', dial: '+973' },
+    { name: 'Bangladesh', code: 'BD', dial: '+880' },
+    { name: 'Barbados', code: 'BB', dial: '+1' },
+    { name: 'Belarus', code: 'BY', dial: '+375' },
+    { name: 'Belgium', code: 'BE', dial: '+32' },
+    { name: 'Belize', code: 'BZ', dial: '+501' },
+    { name: 'Benin', code: 'BJ', dial: '+229' },
+    { name: 'Bhutan', code: 'BT', dial: '+975' },
+    { name: 'Bolivia', code: 'BO', dial: '+591' },
+    { name: 'Bosnia and Herzegovina', code: 'BA', dial: '+387' },
+    { name: 'Botswana', code: 'BW', dial: '+267' },
+    { name: 'Brazil', code: 'BR', dial: '+55' },
+    { name: 'Brunei', code: 'BN', dial: '+673' },
+    { name: 'Bulgaria', code: 'BG', dial: '+359' },
+    { name: 'Burkina Faso', code: 'BF', dial: '+226' },
+    { name: 'Burundi', code: 'BI', dial: '+257' },
+    { name: 'Cambodia', code: 'KH', dial: '+855' },
+    { name: 'Cameroon', code: 'CM', dial: '+237' },
+    { name: 'Canada', code: 'CA', dial: '+1' },
+    { name: 'Cape Verde', code: 'CV', dial: '+238' },
+    { name: 'Central African Republic', code: 'CF', dial: '+236' },
+    { name: 'Chad', code: 'TD', dial: '+235' },
+    { name: 'Chile', code: 'CL', dial: '+56' },
+    { name: 'China', code: 'CN', dial: '+86' },
+    { name: 'Colombia', code: 'CO', dial: '+57' },
+    { name: 'Comoros', code: 'KM', dial: '+269' },
+    { name: 'Congo (DRC)', code: 'CD', dial: '+243' },
+    { name: 'Congo (Republic)', code: 'CG', dial: '+242' },
+    { name: 'Costa Rica', code: 'CR', dial: '+506' },
+    { name: "Côte d'Ivoire", code: 'CI', dial: '+225' },
+    { name: 'Croatia', code: 'HR', dial: '+385' },
+    { name: 'Cuba', code: 'CU', dial: '+53' },
+    { name: 'Cyprus', code: 'CY', dial: '+357' },
+    { name: 'Czech Republic', code: 'CZ', dial: '+420' },
+    { name: 'Denmark', code: 'DK', dial: '+45' },
+    { name: 'Djibouti', code: 'DJ', dial: '+253' },
+    { name: 'Dominica', code: 'DM', dial: '+1' },
+    { name: 'Dominican Republic', code: 'DO', dial: '+1' },
+    { name: 'Ecuador', code: 'EC', dial: '+593' },
+    { name: 'Egypt', code: 'EG', dial: '+20' },
+    { name: 'El Salvador', code: 'SV', dial: '+503' },
+    { name: 'Equatorial Guinea', code: 'GQ', dial: '+240' },
+    { name: 'Eritrea', code: 'ER', dial: '+291' },
+    { name: 'Estonia', code: 'EE', dial: '+372' },
+    { name: 'Eswatini', code: 'SZ', dial: '+268' },
+    { name: 'Ethiopia', code: 'ET', dial: '+251' },
+    { name: 'Fiji', code: 'FJ', dial: '+679' },
+    { name: 'Finland', code: 'FI', dial: '+358' },
+    { name: 'France', code: 'FR', dial: '+33' },
+    { name: 'Gabon', code: 'GA', dial: '+241' },
+    { name: 'Gambia', code: 'GM', dial: '+220' },
+    { name: 'Georgia', code: 'GE', dial: '+995' },
+    { name: 'Germany', code: 'DE', dial: '+49' },
+    { name: 'Ghana', code: 'GH', dial: '+233' },
+    { name: 'Greece', code: 'GR', dial: '+30' },
+    { name: 'Grenada', code: 'GD', dial: '+1' },
+    { name: 'Guatemala', code: 'GT', dial: '+502' },
+    { name: 'Guinea', code: 'GN', dial: '+224' },
+    { name: 'Guinea-Bissau', code: 'GW', dial: '+245' },
+    { name: 'Guyana', code: 'GY', dial: '+592' },
+    { name: 'Haiti', code: 'HT', dial: '+509' },
+    { name: 'Honduras', code: 'HN', dial: '+504' },
+    { name: 'Hong Kong', code: 'HK', dial: '+852' },
+    { name: 'Hungary', code: 'HU', dial: '+36' },
+    { name: 'Iceland', code: 'IS', dial: '+354' },
+    { name: 'India', code: 'IN', dial: '+91' },
+    { name: 'Indonesia', code: 'ID', dial: '+62' },
+    { name: 'Iran', code: 'IR', dial: '+98' },
+    { name: 'Iraq', code: 'IQ', dial: '+964' },
+    { name: 'Ireland', code: 'IE', dial: '+353' },
+    { name: 'Israel', code: 'IL', dial: '+972' },
+    { name: 'Italy', code: 'IT', dial: '+39' },
+    { name: 'Jamaica', code: 'JM', dial: '+1' },
+    { name: 'Japan', code: 'JP', dial: '+81' },
+    { name: 'Jordan', code: 'JO', dial: '+962' },
+    { name: 'Kazakhstan', code: 'KZ', dial: '+7' },
+    { name: 'Kenya', code: 'KE', dial: '+254' },
+    { name: 'Kiribati', code: 'KI', dial: '+686' },
+    { name: 'Kuwait', code: 'KW', dial: '+965' },
+    { name: 'Kyrgyzstan', code: 'KG', dial: '+996' },
+    { name: 'Laos', code: 'LA', dial: '+856' },
+    { name: 'Latvia', code: 'LV', dial: '+371' },
+    { name: 'Lebanon', code: 'LB', dial: '+961' },
+    { name: 'Lesotho', code: 'LS', dial: '+266' },
+    { name: 'Liberia', code: 'LR', dial: '+231' },
+    { name: 'Libya', code: 'LY', dial: '+218' },
+    { name: 'Liechtenstein', code: 'LI', dial: '+423' },
+    { name: 'Lithuania', code: 'LT', dial: '+370' },
+    { name: 'Luxembourg', code: 'LU', dial: '+352' },
+    { name: 'Macau', code: 'MO', dial: '+853' },
+    { name: 'Madagascar', code: 'MG', dial: '+261' },
+    { name: 'Malawi', code: 'MW', dial: '+265' },
+    { name: 'Malaysia', code: 'MY', dial: '+60' },
+    { name: 'Maldives', code: 'MV', dial: '+960' },
+    { name: 'Mali', code: 'ML', dial: '+223' },
+    { name: 'Malta', code: 'MT', dial: '+356' },
+    { name: 'Marshall Islands', code: 'MH', dial: '+692' },
+    { name: 'Mauritania', code: 'MR', dial: '+222' },
+    { name: 'Mauritius', code: 'MU', dial: '+230' },
+    { name: 'Mexico', code: 'MX', dial: '+52' },
+    { name: 'Micronesia', code: 'FM', dial: '+691' },
+    { name: 'Moldova', code: 'MD', dial: '+373' },
+    { name: 'Monaco', code: 'MC', dial: '+377' },
+    { name: 'Mongolia', code: 'MN', dial: '+976' },
+    { name: 'Montenegro', code: 'ME', dial: '+382' },
+    { name: 'Morocco', code: 'MA', dial: '+212' },
+    { name: 'Mozambique', code: 'MZ', dial: '+258' },
+    { name: 'Myanmar', code: 'MM', dial: '+95' },
+    { name: 'Namibia', code: 'NA', dial: '+264' },
+    { name: 'Nauru', code: 'NR', dial: '+674' },
+    { name: 'Nepal', code: 'NP', dial: '+977' },
+    { name: 'Netherlands', code: 'NL', dial: '+31' },
+    { name: 'New Zealand', code: 'NZ', dial: '+64' },
+    { name: 'Nicaragua', code: 'NI', dial: '+505' },
+    { name: 'Niger', code: 'NE', dial: '+227' },
+    { name: 'Nigeria', code: 'NG', dial: '+234' },
+    { name: 'North Korea', code: 'KP', dial: '+850' },
+    { name: 'North Macedonia', code: 'MK', dial: '+389' },
+    { name: 'Norway', code: 'NO', dial: '+47' },
+    { name: 'Oman', code: 'OM', dial: '+968' },
+    { name: 'Pakistan', code: 'PK', dial: '+92' },
+    { name: 'Palau', code: 'PW', dial: '+680' },
+    { name: 'Palestine', code: 'PS', dial: '+970' },
+    { name: 'Panama', code: 'PA', dial: '+507' },
+    { name: 'Papua New Guinea', code: 'PG', dial: '+675' },
+    { name: 'Paraguay', code: 'PY', dial: '+595' },
+    { name: 'Peru', code: 'PE', dial: '+51' },
+    { name: 'Philippines', code: 'PH', dial: '+63' },
+    { name: 'Poland', code: 'PL', dial: '+48' },
+    { name: 'Portugal', code: 'PT', dial: '+351' },
+    { name: 'Qatar', code: 'QA', dial: '+974' },
+    { name: 'Romania', code: 'RO', dial: '+40' },
+    { name: 'Russia', code: 'RU', dial: '+7' },
+    { name: 'Rwanda', code: 'RW', dial: '+250' },
+    { name: 'Saint Kitts and Nevis', code: 'KN', dial: '+1' },
+    { name: 'Saint Lucia', code: 'LC', dial: '+1' },
+    { name: 'Saint Vincent and the Grenadines', code: 'VC', dial: '+1' },
+    { name: 'Samoa', code: 'WS', dial: '+685' },
+    { name: 'San Marino', code: 'SM', dial: '+378' },
+    { name: 'Sao Tome and Principe', code: 'ST', dial: '+239' },
+    { name: 'Saudi Arabia', code: 'SA', dial: '+966' },
+    { name: 'Senegal', code: 'SN', dial: '+221' },
+    { name: 'Serbia', code: 'RS', dial: '+381' },
+    { name: 'Seychelles', code: 'SC', dial: '+248' },
+    { name: 'Sierra Leone', code: 'SL', dial: '+232' },
+    { name: 'Singapore', code: 'SG', dial: '+65' },
+    { name: 'Slovakia', code: 'SK', dial: '+421' },
+    { name: 'Slovenia', code: 'SI', dial: '+386' },
+    { name: 'Solomon Islands', code: 'SB', dial: '+677' },
+    { name: 'Somalia', code: 'SO', dial: '+252' },
+    { name: 'South Africa', code: 'ZA', dial: '+27' },
+    { name: 'South Korea', code: 'KR', dial: '+82' },
+    { name: 'South Sudan', code: 'SS', dial: '+211' },
+    { name: 'Spain', code: 'ES', dial: '+34' },
+    { name: 'Sri Lanka', code: 'LK', dial: '+94' },
+    { name: 'Sudan', code: 'SD', dial: '+249' },
+    { name: 'Suriname', code: 'SR', dial: '+597' },
+    { name: 'Sweden', code: 'SE', dial: '+46' },
+    { name: 'Switzerland', code: 'CH', dial: '+41' },
+    { name: 'Syria', code: 'SY', dial: '+963' },
+    { name: 'Taiwan', code: 'TW', dial: '+886' },
+    { name: 'Tajikistan', code: 'TJ', dial: '+992' },
+    { name: 'Tanzania', code: 'TZ', dial: '+255' },
+    { name: 'Thailand', code: 'TH', dial: '+66' },
+    { name: 'Timor-Leste', code: 'TL', dial: '+670' },
+    { name: 'Togo', code: 'TG', dial: '+228' },
+    { name: 'Tonga', code: 'TO', dial: '+676' },
+    { name: 'Trinidad and Tobago', code: 'TT', dial: '+1' },
+    { name: 'Tunisia', code: 'TN', dial: '+216' },
+    { name: 'Turkey', code: 'TR', dial: '+90' },
+    { name: 'Turkmenistan', code: 'TM', dial: '+993' },
+    { name: 'Tuvalu', code: 'TV', dial: '+688' },
+    { name: 'Uganda', code: 'UG', dial: '+256' },
+    { name: 'Ukraine', code: 'UA', dial: '+380' },
+    { name: 'United Arab Emirates', code: 'AE', dial: '+971' },
+    { name: 'United Kingdom', code: 'GB', dial: '+44' },
+    { name: 'United States', code: 'US', dial: '+1' },
+    { name: 'Uruguay', code: 'UY', dial: '+598' },
+    { name: 'Uzbekistan', code: 'UZ', dial: '+998' },
+    { name: 'Vanuatu', code: 'VU', dial: '+678' },
+    { name: 'Vatican City', code: 'VA', dial: '+379' },
+    { name: 'Venezuela', code: 'VE', dial: '+58' },
+    { name: 'Vietnam', code: 'VN', dial: '+84' },
+    { name: 'Yemen', code: 'YE', dial: '+967' },
+    { name: 'Zambia', code: 'ZM', dial: '+260' },
+    { name: 'Zimbabwe', code: 'ZW', dial: '+263' },
 ];
 
 /**
@@ -250,42 +250,42 @@ const DEFAULT_PHONE_LENGTH: [number, number] = [7, 12];
 /** Example national-number formatting per country, shown as the phone
  * input's placeholder so it updates to match whichever country is selected. */
 const PHONE_PLACEHOLDER_BY_COUNTRY: Record<string, string> = {
-    PH: "905 123 4567",
-    US: "(415) 555 2671",
-    CA: "(416) 555 0199",
-    GB: "7911 123456",
-    AU: "412 345 678",
-    SG: "8123 4567",
-    IN: "98765 43210",
-    DE: "1512 3456789",
-    FR: "6 12 34 56 78",
-    JP: "90 1234 5678",
-    CN: "138 0013 8000",
-    BR: "11 96123 4567",
-    MX: "55 1234 5678",
-    ID: "812 3456 789",
-    VN: "91 234 56 78",
-    TH: "81 234 5678",
-    MY: "12 345 6789",
-    NZ: "21 123 4567",
-    ZA: "71 123 4567",
-    AE: "50 123 4567",
-    SA: "50 123 4567",
-    KR: "10 1234 5678",
-    IT: "312 345 6789",
-    ES: "612 34 56 78",
-    NL: "6 12345678",
-    HK: "5123 4567",
+    PH: '905 123 4567',
+    US: '(415) 555 2671',
+    CA: '(416) 555 0199',
+    GB: '7911 123456',
+    AU: '412 345 678',
+    SG: '8123 4567',
+    IN: '98765 43210',
+    DE: '1512 3456789',
+    FR: '6 12 34 56 78',
+    JP: '90 1234 5678',
+    CN: '138 0013 8000',
+    BR: '11 96123 4567',
+    MX: '55 1234 5678',
+    ID: '812 3456 789',
+    VN: '91 234 56 78',
+    TH: '81 234 5678',
+    MY: '12 345 6789',
+    NZ: '21 123 4567',
+    ZA: '71 123 4567',
+    AE: '50 123 4567',
+    SA: '50 123 4567',
+    KR: '10 1234 5678',
+    IT: '312 345 6789',
+    ES: '612 34 56 78',
+    NL: '6 12345678',
+    HK: '5123 4567',
 };
 
-const DEFAULT_PHONE_PLACEHOLDER = "123 456 7890";
+const DEFAULT_PHONE_PLACEHOLDER = '123 456 7890';
 
 function validatePhoneNumber(
     rawValue: string,
     countryCode: string,
-    errors: Translation["signup"]["errors"],
+    errors: Translation['signup']['errors'],
 ) {
-    const digits = rawValue.replace(/\D/g, "");
+    const digits = rawValue.replace(/\D/g, '');
 
     if (!digits) {
         return errors.required;
@@ -299,10 +299,10 @@ function validatePhoneNumber(
 
     if (digits.length < min || digits.length > max) {
         return min === max
-            ? errors.invalidExact.replace("{n}", String(min))
+            ? errors.invalidExact.replace('{n}', String(min))
             : errors.invalidRange
-                  .replace("{min}", String(min))
-                  .replace("{max}", String(max));
+                  .replace('{min}', String(min))
+                  .replace('{max}', String(max));
     }
 
     return null;
@@ -313,18 +313,18 @@ const LanguageContext = createContext<{
     setCode: (code: LanguageCode) => void;
     t: Translation;
 }>({
-    code: "en",
+    code: 'en',
     setCode: () => {},
-    t: getTranslation("en"),
+    t: getTranslation('en'),
 });
 
 function useTranslation() {
     return useContext(LanguageContext);
 }
 
-const NAV_HREFS = ["#platform", "#how", "#results", "#faq", "#legal"] as const;
+const NAV_HREFS = ['#platform', '#how', '#results', '#faq', '#legal'] as const;
 
-const STAT_VALUES = ["140,000", "52ms", "24/7"] as const;
+const STAT_VALUES = ['140,000', '52ms', '24/7'] as const;
 
 const PLATFORM_FEATURE_ICONS = [
     Atom,
@@ -336,10 +336,10 @@ const PLATFORM_FEATURE_ICONS = [
 ];
 
 const TESTIMONIAL_PEOPLE = [
-    { name: "Renata M.", initials: "RM" },
-    { name: "Diego S.", initials: "DS" },
-    { name: "Amara K.", initials: "AK" },
-    { name: "Jonah P.", initials: "JP" },
+    { name: 'Renata M.', initials: 'RM' },
+    { name: 'Diego S.', initials: 'DS' },
+    { name: 'Amara K.', initials: 'AK' },
+    { name: 'Jonah P.', initials: 'JP' },
 ] as const;
 
 /**
@@ -364,12 +364,12 @@ function CountUpStat({
     useEffect(() => {
         if (!match) return;
 
-        const target = Number(match[1].replace(/,/g, ""));
-        const useComma = match[1].includes(",");
+        const target = Number(match[1].replace(/,/g, ''));
+        const useComma = match[1].includes(',');
         const suffix = match[2];
 
         const prefersReducedMotion = window.matchMedia(
-            "(prefers-reduced-motion: reduce)",
+            '(prefers-reduced-motion: reduce)',
         ).matches;
         if (prefersReducedMotion) {
             setDisplay(
@@ -408,7 +408,7 @@ function CountUpStat({
  */
 function Reveal({
     children,
-    className = "",
+    className = '',
     delay = 0,
 }: {
     children: React.ReactNode;
@@ -424,7 +424,7 @@ function Reveal({
 
         const observer = new IntersectionObserver(
             ([entry]) => setVisible(entry.isIntersecting),
-            { threshold: 0.15, rootMargin: "0px 0px -40px 0px" },
+            { threshold: 0.15, rootMargin: '0px 0px -40px 0px' },
         );
         observer.observe(el);
         return () => observer.disconnect();
@@ -433,7 +433,7 @@ function Reveal({
     return (
         <div
             ref={ref}
-            className={`nullypto-reveal ${visible ? "nullypto-reveal-visible" : ""} ${className}`}
+            className={`nullypto-reveal ${visible ? 'nullypto-reveal-visible' : ''} ${className}`}
             style={delay ? { transitionDelay: `${delay}ms` } : undefined}
         >
             {children}
@@ -470,7 +470,7 @@ function LanguageSelect({
 }) {
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
-    const [query, setQuery] = useState("");
+    const [query, setQuery] = useState('');
     const containerRef = useRef<HTMLDivElement>(null);
     const searchRef = useRef<HTMLInputElement>(null);
 
@@ -496,16 +496,16 @@ function LanguageSelect({
             }
         }
         function handleKeyDown(event: KeyboardEvent) {
-            if (event.key === "Escape") setOpen(false);
+            if (event.key === 'Escape') setOpen(false);
         }
 
-        document.addEventListener("mousedown", handlePointerDown);
-        document.addEventListener("keydown", handleKeyDown);
+        document.addEventListener('mousedown', handlePointerDown);
+        document.addEventListener('keydown', handleKeyDown);
         searchRef.current?.focus();
 
         return () => {
-            document.removeEventListener("mousedown", handlePointerDown);
-            document.removeEventListener("keydown", handleKeyDown);
+            document.removeEventListener('mousedown', handlePointerDown);
+            document.removeEventListener('keydown', handleKeyDown);
         };
     }, [open]);
 
@@ -518,7 +518,7 @@ function LanguageSelect({
                 aria-expanded={open}
                 onClick={() => {
                     setOpen((isOpen) => !isOpen);
-                    setQuery("");
+                    setQuery('');
                 }}
             >
                 <span>{selected.label}</span>
@@ -551,8 +551,8 @@ function LanguageSelect({
                                 aria-selected={option.code === value}
                                 className={`nullypto-phone-code-option ${
                                     option.code === value
-                                        ? "nullypto-active"
-                                        : ""
+                                        ? 'nullypto-active'
+                                        : ''
                                 }`}
                                 onClick={() => {
                                     onChange(option.code);
@@ -614,7 +614,7 @@ function SiteHeader({ showDashboardLink }: { showDashboardLink: boolean }) {
                         </a>
                     ))}
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                     {showDashboardLink && (
                         <Link
                             href={dashboard()}
@@ -723,7 +723,7 @@ function PhoneCountryCodeSelect({
 }) {
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
-    const [query, setQuery] = useState("");
+    const [query, setQuery] = useState('');
     const containerRef = useRef<HTMLDivElement>(null);
     const searchRef = useRef<HTMLInputElement>(null);
 
@@ -752,16 +752,16 @@ function PhoneCountryCodeSelect({
             }
         }
         function handleKeyDown(event: KeyboardEvent) {
-            if (event.key === "Escape") setOpen(false);
+            if (event.key === 'Escape') setOpen(false);
         }
 
-        document.addEventListener("mousedown", handlePointerDown);
-        document.addEventListener("keydown", handleKeyDown);
+        document.addEventListener('mousedown', handlePointerDown);
+        document.addEventListener('keydown', handleKeyDown);
         searchRef.current?.focus();
 
         return () => {
-            document.removeEventListener("mousedown", handlePointerDown);
-            document.removeEventListener("keydown", handleKeyDown);
+            document.removeEventListener('mousedown', handlePointerDown);
+            document.removeEventListener('keydown', handleKeyDown);
         };
     }, [open]);
 
@@ -774,7 +774,7 @@ function PhoneCountryCodeSelect({
                 aria-expanded={open}
                 onClick={() => {
                     setOpen((isOpen) => !isOpen);
-                    setQuery("");
+                    setQuery('');
                 }}
             >
                 <span
@@ -808,8 +808,8 @@ function PhoneCountryCodeSelect({
                                 aria-selected={country.code === value}
                                 className={`nullypto-phone-code-option ${
                                     country.code === value
-                                        ? "nullypto-active"
-                                        : ""
+                                        ? 'nullypto-active'
+                                        : ''
                                 }`}
                                 onClick={() => {
                                     onChange(country.code);
@@ -847,10 +847,10 @@ function Modal({
 }) {
     useEffect(() => {
         function handleKeyDown(event: KeyboardEvent) {
-            if (event.key === "Escape") onClose();
+            if (event.key === 'Escape') onClose();
         }
-        document.addEventListener("keydown", handleKeyDown);
-        return () => document.removeEventListener("keydown", handleKeyDown);
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
     }, [onClose]);
 
     return (
@@ -921,7 +921,7 @@ function LeadResultModal({
     const { t } = useTranslation();
     const r = t.signup.result;
 
-    if (result.status === "error") {
+    if (result.status === 'error') {
         return (
             <Modal title={r.errorTitle} onClose={onClose}>
                 <p>{r.errorBody}</p>
@@ -944,9 +944,9 @@ function LeadResultModal({
                     href={result.autologinUrl}
                     className="nullypto-submit-btn"
                     style={{
-                        display: "inline-block",
-                        textAlign: "center",
-                        textDecoration: "none",
+                        display: 'inline-block',
+                        textAlign: 'center',
+                        textDecoration: 'none',
                     }}
                 >
                     {r.autologinCta}
@@ -958,26 +958,24 @@ function LeadResultModal({
 
 /** Reads a cookie's raw (URL-decoded) value, or null if it isn't set. */
 function getCookie(name: string): string | null {
-    const match = document.cookie.match(
-        new RegExp(`(?:^|; )${name}=([^;]*)`),
-    );
+    const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
     return match ? decodeURIComponent(match[1]) : null;
 }
 
 type LeadResult =
-    | { status: "success"; autologinUrl: string | null }
-    | { status: "error" };
+    | { status: 'success'; autologinUrl: string | null }
+    | { status: 'error' };
 
 function SignupForm() {
     const { t } = useTranslation();
-    const [countryCode, setCountryCode] = useState("PH");
-    const [phoneValue, setPhoneValue] = useState("");
+    const [countryCode, setCountryCode] = useState('PH');
+    const [phoneValue, setPhoneValue] = useState('');
     const [phoneError, setPhoneError] = useState<string | null>(null);
     const [termsOpen, setTermsOpen] = useState(false);
     const [privacyOpen, setPrivacyOpen] = useState(false);
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [email, setEmail] = useState("");
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const [leadResult, setLeadResult] = useState<LeadResult | null>(null);
     const countryTouchedRef = useRef(false);
@@ -987,13 +985,13 @@ function SignupForm() {
     useEffect(() => {
         const controller = new AbortController();
 
-        fetch("https://ipapi.co/json/", { signal: controller.signal })
+        fetch('https://ipapi.co/json/', { signal: controller.signal })
             .then((response) => {
-                console.log("[ip-country] response status:", response.status);
+                console.log('[ip-country] response status:', response.status);
                 return response.ok ? response.json() : null;
             })
             .then((data: { country_code?: string } | null) => {
-                console.log("[ip-country] response body:", data);
+                console.log('[ip-country] response body:', data);
                 if (!data?.country_code || countryTouchedRef.current) return;
 
                 const detected = data.country_code.toUpperCase();
@@ -1001,15 +999,15 @@ function SignupForm() {
                     (country) => country.code === detected,
                 );
                 console.log(
-                    "[ip-country] detected:",
+                    '[ip-country] detected:',
                     detected,
-                    "known:",
+                    'known:',
                     isKnownCountry,
                 );
                 if (isKnownCountry) setCountryCode(detected);
             })
             .catch((err) => {
-                console.error("[ip-country] lookup failed:", err);
+                console.error('[ip-country] lookup failed:', err);
                 // Ignore lookup failures (offline, blocked, rate-limited)
                 // and keep the default country selection.
             });
@@ -1037,33 +1035,33 @@ function SignupForm() {
                 setSubmitting(true);
                 setLeadResult(null);
 
-                fetch("/submit-lead", {
-                    method: "POST",
+                fetch('/submit-lead', {
+                    method: 'POST',
                     headers: {
-                        "Content-Type": "application/json",
-                        Accept: "application/json",
-                        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") ?? "",
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'X-XSRF-TOKEN': getCookie('XSRF-TOKEN') ?? '',
                     },
                     body: JSON.stringify({
                         firstname: firstName,
                         lastname: lastName,
                         email,
-                        mobile: phoneValue.replace(/\D/g, ""),
+                        mobile: phoneValue.replace(/\D/g, ''),
                         country_code: countryCode,
                     }),
                 })
                     .then(async (response) => {
                         const body = await response.json().catch(() => null);
                         if (!response.ok || !body?.success) {
-                            setLeadResult({ status: "error" });
+                            setLeadResult({ status: 'error' });
                             return;
                         }
                         setLeadResult({
-                            status: "success",
+                            status: 'success',
                             autologinUrl: body.autologin_url ?? null,
                         });
                     })
-                    .catch(() => setLeadResult({ status: "error" }))
+                    .catch(() => setLeadResult({ status: 'error' }))
                     .finally(() => setSubmitting(false));
             }}
         >
@@ -1155,15 +1153,15 @@ function SignupForm() {
             <label className="nullypto-terms-row">
                 <input type="checkbox" required style={{ marginTop: 2 }} />
                 <span>
-                    {t.signup.agreePrefix}{" "}
+                    {t.signup.agreePrefix}{' '}
                     <button
                         type="button"
                         className="nullypto-link-btn"
                         onClick={() => setTermsOpen(true)}
                     >
                         {t.signup.termsLink}
-                    </button>{" "}
-                    {t.signup.andWord}{" "}
+                    </button>{' '}
+                    {t.signup.andWord}{' '}
                     <button
                         type="button"
                         className="nullypto-link-btn"
@@ -1219,16 +1217,16 @@ function AssessmentModal({ onClose }: { onClose: () => void }) {
 
     useEffect(() => {
         function handleKeyDown(event: KeyboardEvent) {
-            if (event.key === "Escape") onClose();
+            if (event.key === 'Escape') onClose();
         }
-        document.addEventListener("keydown", handleKeyDown);
-        return () => document.removeEventListener("keydown", handleKeyDown);
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
     }, [onClose]);
 
     const minutes = Math.floor(secondsLeft / 60);
     const seconds = secondsLeft % 60;
-    const time = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-    const [before, after] = t.exitModal.heldFor.split("{time}");
+    const time = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    const [before, after] = t.exitModal.heldFor.split('{time}');
 
     return (
         <div
@@ -1241,7 +1239,7 @@ function AssessmentModal({ onClose }: { onClose: () => void }) {
                 className="nullypto-exit-modal"
                 role="dialog"
                 aria-modal="true"
-                aria-label={t.exitModal.heldFor.replace("{time}", time)}
+                aria-label={t.exitModal.heldFor.replace('{time}', time)}
             >
                 <button
                     type="button"
@@ -1274,7 +1272,7 @@ function Hero() {
                 <div>
                     <span className="nullypto-badge">{t.hero.badge}</span>
                     <h1>
-                        {t.hero.headline}{" "}
+                        {t.hero.headline}{' '}
                         <span className="nullypto-accent">
                             {t.hero.headlineAccent}
                         </span>
@@ -1421,7 +1419,7 @@ function ResultsSection() {
                                 type="button"
                                 aria-label={`Show testimonial from ${item.name}`}
                                 className={
-                                    i === index ? "nullypto-active" : undefined
+                                    i === index ? 'nullypto-active' : undefined
                                 }
                                 onClick={() => setIndex(i)}
                             />
@@ -1450,7 +1448,7 @@ function FaqSection() {
                         return (
                             <div
                                 key={item.q}
-                                className={`nullypto-faq-item ${isOpen ? "nullypto-open" : ""}`}
+                                className={`nullypto-faq-item ${isOpen ? 'nullypto-open' : ''}`}
                             >
                                 <button
                                     type="button"
@@ -1550,9 +1548,9 @@ function SiteFooter() {
                         </a>
                         <span
                             style={{
-                                display: "block",
-                                color: "#78877f",
-                                fontSize: "14.5px",
+                                display: 'block',
+                                color: '#78877f',
+                                fontSize: '14.5px',
                             }}
                         >
                             {t.footer.supportLine}
@@ -1561,7 +1559,7 @@ function SiteFooter() {
                 </div>
                 <div className="nullypto-foot-bottom">
                     <span>
-                        © {new Date().getFullYear()} Nullypto.{" "}
+                        © {new Date().getFullYear()} Nullypto.{' '}
                         {t.footer.copyrightLine}
                     </span>
                     <span>{t.footer.disclaimer}</span>
@@ -1574,7 +1572,7 @@ function SiteFooter() {
 export default function Welcome() {
     const { auth } = usePage().props;
     const [showRiskWarning, setShowRiskWarning] = useState(true);
-    const [languageCode, setLanguageCode] = useState<LanguageCode>("en");
+    const [languageCode, setLanguageCode] = useState<LanguageCode>('en');
     const [showAssessmentModal, setShowAssessmentModal] = useState(false);
 
     // Smooth-scroll the in-page nav/footer anchor links (#platform, #how, …).
@@ -1583,7 +1581,7 @@ export default function Welcome() {
     // navigation.
     useEffect(() => {
         const previous = document.documentElement.style.scrollBehavior;
-        document.documentElement.style.scrollBehavior = "smooth";
+        document.documentElement.style.scrollBehavior = 'smooth';
         return () => {
             document.documentElement.style.scrollBehavior = previous;
         };

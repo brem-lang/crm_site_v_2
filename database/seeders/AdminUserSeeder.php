@@ -28,7 +28,5 @@ class AdminUserSeeder extends Seeder
 
         $user->is_admin = true;
         $user->save();
-
-        $this->command->info("Admin user ready: {$email} / {$password}");
     }
 }
