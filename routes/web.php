@@ -2,13 +2,29 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SubmitLeadController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 // Welcome page
 Route::inertia('/nullypto', 'welcome')->name('home');
 
 Route::get('/', function () {
-    return rand(0, 1) ? redirect('/articles') : redirect('/prime-zone');
+    $destination = DB::transaction(function () {
+        $counter = DB::table('redirect_counters')
+            ->where('key', 'landing_split')
+            ->lockForUpdate()
+            ->first();
+
+        $isEven = $counter->count % 2 === 0;
+
+        DB::table('redirect_counters')
+            ->where('key', 'landing_split')
+            ->increment('count');
+
+        return $isEven ? '/articles' : '/prime-zone';
+    });
+
+    return redirect($destination);
 })->name('landing');
 
 Route::post('/submit-lead', [SubmitLeadController::class, 'store'])
