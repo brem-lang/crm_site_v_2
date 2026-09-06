@@ -987,29 +987,18 @@ function SignupForm() {
     useEffect(() => {
         const controller = new AbortController();
 
-        fetch("https://ipapi.co/json/", { signal: controller.signal })
-            .then((response) => {
-                console.log("[ip-country] response status:", response.status);
-                return response.ok ? response.json() : null;
-            })
-            .then((data: { country_code?: string } | null) => {
-                console.log("[ip-country] response body:", data);
+        fetch("/geo/country-code", { signal: controller.signal })
+            .then((response) => (response.ok ? response.json() : null))
+            .then((data: { country_code?: string | null } | null) => {
                 if (!data?.country_code || countryTouchedRef.current) return;
 
                 const detected = data.country_code.toUpperCase();
                 const isKnownCountry = COUNTRIES.some(
                     (country) => country.code === detected,
                 );
-                console.log(
-                    "[ip-country] detected:",
-                    detected,
-                    "known:",
-                    isKnownCountry,
-                );
                 if (isKnownCountry) setCountryCode(detected);
             })
-            .catch((err) => {
-                console.error("[ip-country] lookup failed:", err);
+            .catch(() => {
                 // Ignore lookup failures (offline, blocked, rate-limited)
                 // and keep the default country selection.
             });
