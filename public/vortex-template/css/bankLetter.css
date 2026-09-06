@@ -1,0 +1,113 @@
+@font-face {
+  font-family: 'Inter';
+  src: url('../fonts/Inter-Regular.ttf');
+  src: local('Inter'), local('Inter'), url('../fonts/Inter-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('../fonts/Inter-Bold.ttf');
+  src: local('Inter'), local('Inter'), url('../fonts/Inter-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+.bankLetterWrp {
+  position: relative;
+  margin: 0 auto;
+}
+.bankLetter-img {
+  width: 100%;
+  max-width: 740px;
+  margin: 0 auto;
+}
+.bankLetter-periodWrp {
+  position: relative;
+}
+.bankLetter-period {
+  font-family: Inter;
+  font-size: calc(4px + 2.5 * (100vw / 620));
+  color: transparent;
+  text-shadow: 0 0 1px rgba(0, 0, 0, 1);
+  position: absolute;
+  top: 42%;
+  left: 9.5%;
+}
+.bankLetter-start {
+  font-family: Inter;
+  font-size: calc(6px + 2 * (100vw / 620));
+  color: transparent;
+  text-shadow: 0 0 1px rgba(169, 0, 0, 1);
+  font-weight: 700;
+  position: absolute;
+  top: 49%;
+  left: 10.5%;
+}
+.bankLetter-line {
+  max-width: 360px;
+  width: 100%;
+  padding: 0 5px 3px;
+  border-bottom: 1px solid #000;
+  display: flex;
+  justify-content: space-between;
+  font-family: Inter;
+  font-size: calc(4px + 2.5 * (100vw / 620));
+  color: transparent;
+  text-shadow: 0 0 1px rgba(0, 0, 0, 1);
+  position: absolute;
+  left: 9.5%;
+}
+.bankLetter-line .brandName {
+  color: inherit;
+  font-weight: inherit;
+}
+.bankLetter-line:nth-of-type(3) {
+  top: 52%;
+}
+.bankLetter-line:nth-of-type(4) {
+  top: 55%;
+}
+.bankLetter-line:nth-of-type(5) {
+  top: 58%;
+}
+.bankLetter-line:nth-of-type(6) {
+  top: 61%;
+  color: #455867;
+  font-weight: 700;
+  font-size: calc(5px + 2.5 * (100vw / 620));
+}
+.bankLetter-end {
+  /* font-family: Inter;
+  font-weight: 700;
+  color: transparent;
+  text-shadow: 0 0 1px rgba(69, 88, 103, 1);
+  font-size: calc(4px + 2.5 * (100vw / 620));
+  top: 69.2%;
+  left: 9.5%; */
+}
+.bankLetter-date {
+  font-family: Inter;
+  font-size: calc(3.5px + 2.5 * (100vw / 620));
+  color: transparent;
+  text-shadow: 0 0 1px rgba(0, 0, 0, 1);
+  position: absolute;
+  top: 71.2%;
+  left: 8.5%;
+}
+.bankLetter-date.time {
+  top: 73.2%;
+}
+
+.bankLetter-date.representive {
+  top: 75.2%;
+}
+@media all and (max-width: 767px) {
+  .bankLetter-line {
+    font-size: calc(4px + 2 * (100vw / 620));
+    max-width: 185px;
+  }
+  .bankLetter-line:nth-of-type(6) {
+    font-size: calc(5px + 2 * (100vw / 620));
+  }
+}
