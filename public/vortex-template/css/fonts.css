@@ -1,212 +1,250 @@
 @font-face {
-  font-family: "Open Sans";
-  src: url("../fonts/OpenSans-Regular.woff");
-  src: local("Open Sans Regular"), local("OpenSans-Regular"),
-    url("../fonts/OpenSans-Regular.woff") format("woff"),
-    url("../fonts/OpenSans-Regular.ttf") format("truetype");
-  /* font-weight: normal; */
-  font-weight: 400;
-  font-style: normal;
+    font-family: 'Open Sans';
+    src: url('../fonts/OpenSans-Regular.woff');
+    src:
+        local('Open Sans Regular'),
+        local('OpenSans-Regular'),
+        url('../fonts/OpenSans-Regular.woff') format('woff'),
+        url('../fonts/OpenSans-Regular.ttf') format('truetype');
+    /* font-weight: normal; */
+    font-weight: 400;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: "Open Sans";
-  src: url("../fonts/OpenSans-Bold.woff");
-  src: local("Open Sans Bold"), local("OpenSans-Bold"),
-    url("../fonts/OpenSans-Bold.woff") format("woff"),
-    url("../fonts/OpenSans-Bold.ttf") format("truetype");
-  /* font-weight: bold; */
-  font-weight: 700;
-  font-style: normal;
+    font-family: 'Open Sans';
+    src: url('../fonts/OpenSans-Bold.woff');
+    src:
+        local('Open Sans Bold'),
+        local('OpenSans-Bold'),
+        url('../fonts/OpenSans-Bold.woff') format('woff'),
+        url('../fonts/OpenSans-Bold.ttf') format('truetype');
+    /* font-weight: bold; */
+    font-weight: 700;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: "Georgia";
-  src: url("../fonts/Georgia-Bold.woff");
-  src: local("Georgia Bold"), local("Georgia-Bold"),
-    url("../fonts/Georgia-Bold.woff") format("woff"),
-    url("../fonts/Georgia-Bold.ttf") format("truetype");
-  /* font-weight: bold; */
-  font-weight: 700;
-  font-style: normal;
+    font-family: 'Georgia';
+    src: url('../fonts/Georgia-Bold.woff');
+    src:
+        local('Georgia Bold'),
+        local('Georgia-Bold'),
+        url('../fonts/Georgia-Bold.woff') format('woff'),
+        url('../fonts/Georgia-Bold.ttf') format('truetype');
+    /* font-weight: bold; */
+    font-weight: 700;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: "Georgia";
-  src: url("../fonts/Georgia-BoldItalic.ttf");
-  src: local("Georgia Bold Italic"), local("Georgia-Bold-Italic"),
-    url("../fonts/Georgia-BoldItalic.ttf") format("truetype");
-  /* font-weight: bold; */
-  font-weight: 700;
-  font-style: italic;
+    font-family: 'Georgia';
+    src: url('../fonts/Georgia-BoldItalic.ttf');
+    src:
+        local('Georgia Bold Italic'),
+        local('Georgia-Bold-Italic'),
+        url('../fonts/Georgia-BoldItalic.ttf') format('truetype');
+    /* font-weight: bold; */
+    font-weight: 700;
+    font-style: italic;
 }
 
 @font-face {
-  font-family: "Georgia";
-  src: url("../fonts/Georgia.woff");
-  src: local("Georgia"), url("../fonts/Georgia.woff") format("woff"),
-    url("../fonts/Georgia.ttf") format("truetype");
-  /* font-weight: normal; */
-  font-weight: 400;
-  font-style: normal;
+    font-family: 'Georgia';
+    src: url('../fonts/Georgia.woff');
+    src:
+        local('Georgia'),
+        url('../fonts/Georgia.woff') format('woff'),
+        url('../fonts/Georgia.ttf') format('truetype');
+    /* font-weight: normal; */
+    font-weight: 400;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: "Georgia";
-  src: url("../fonts/Georgia-Italic.ttf");
-  src: local("Georgia Italic"),
-    url("../fonts/Georgia-Italic.ttf") format("truetype");
-  /* font-weight: normal; */
-  font-weight: 400;
-  font-style: italic;
+    font-family: 'Georgia';
+    src: url('../fonts/Georgia-Italic.ttf');
+    src:
+        local('Georgia Italic'),
+        url('../fonts/Georgia-Italic.ttf') format('truetype');
+    /* font-weight: normal; */
+    font-weight: 400;
+    font-style: italic;
 }
 
 @font-face {
-  font-family: "Roboto";
-  src: url("../fonts/Roboto-Regular.ttf");
-  src: local("Roboto"), local("Roboto"),
-    url("../fonts/Roboto-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
+    font-family: 'Roboto';
+    src: url('../fonts/Roboto-Regular.ttf');
+    src:
+        local('Roboto'),
+        local('Roboto'),
+        url('../fonts/Roboto-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: "Roboto";
-  src: url("../fonts/Roboto-Bold.eot");
-  src: local("Roboto Bold"), local("Roboto-Bold"),
-    url("../fonts/Roboto-Bold.woff") format("woff"),
-    url("../fonts/Roboto-Bold.ttf") format("truetype");
-  /* font-weight: bold; */
-  font-weight: 700;
-  font-style: normal;
+    font-family: 'Roboto';
+    src: url('../fonts/Roboto-Bold.eot');
+    src:
+        local('Roboto Bold'),
+        local('Roboto-Bold'),
+        url('../fonts/Roboto-Bold.woff') format('woff'),
+        url('../fonts/Roboto-Bold.ttf') format('truetype');
+    /* font-weight: bold; */
+    font-weight: 700;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: "Roboto";
-  src: url("../fonts/Roboto-Black.ttf");
-  src: local("Roboto"), local("Roboto"),
-    url("../fonts/Roboto-Black.ttf") format("truetype");
-  font-weight: 900;
-  font-style: normal;
+    font-family: 'Roboto';
+    src: url('../fonts/Roboto-Black.ttf');
+    src:
+        local('Roboto'),
+        local('Roboto'),
+        url('../fonts/Roboto-Black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: "Roboto Condensed";
-  src: url(../fonts/RobotoCondensed-Bold.ttf);
-  font-weight: 700;
-  font-style: normal;
+    font-family: 'Roboto Condensed';
+    src: url(../fonts/RobotoCondensed-Bold.ttf);
+    font-weight: 700;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: "Proxima Nova";
-  src: url("ProximaNova-Regular.woff");
-  src: local("Proxima Nova Regular"), local("ProximaNova-Regular"),
-    url("../fonts/ProximaNova-Regular.woff") format("woff");
-  font-weight: normal;
-  font-style: normal;
+    font-family: 'Proxima Nova';
+    src: url('ProximaNova-Regular.woff');
+    src:
+        local('Proxima Nova Regular'),
+        local('ProximaNova-Regular'),
+        url('../fonts/ProximaNova-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: "Proxima Nova";
-  src: url("ProximaNova-Bold.woff");
-  src: local("Proxima Nova Bold"), local("ProximaNova-Bold"),
-    url("../fonts/ProximaNova-Bold.woff") format("woff");
-  font-weight: 700;
-  font-style: normal;
+    font-family: 'Proxima Nova';
+    src: url('ProximaNova-Bold.woff');
+    src:
+        local('Proxima Nova Bold'),
+        local('ProximaNova-Bold'),
+        url('../fonts/ProximaNova-Bold.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: "DM Serif Display";
-  src: url("DM");
-  src: local("DMSerifDisplay Regular"), local("DMSerifDisplay-Regular"),
-    url("../fonts/DMSerifDisplay-Regular.woff") format("woff");
-  font-weight: 400;
-  font-style: normal;
+    font-family: 'DM Serif Display';
+    src: url('DM');
+    src:
+        local('DMSerifDisplay Regular'),
+        local('DMSerifDisplay-Regular'),
+        url('../fonts/DMSerifDisplay-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: "HelveticaNeue Condensed";
-  src: url("../fonts/Helvetica\ Neue\ Condensed\ Black.ttf");
-  src: url("../fonts/Helvetica\ Neue\ Condensed\ Black.ttf") format("truetype");
-  font-weight: 800;
-  font-style: normal;
+    font-family: 'HelveticaNeue Condensed';
+    src: url('../fonts/Helvetica\ Neue\ Condensed\ Black.ttf');
+    src: url('../fonts/Helvetica\ Neue\ Condensed\ Black.ttf')
+        format('truetype');
+    font-weight: 800;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: "HelveticaNeue";
-  src: url("../fonts/HelveticaNeueCyr-Roman.woff2");
-  src: url("../fonts/HelveticaNeueCyr-Roman.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
+    font-family: 'HelveticaNeue';
+    src: url('../fonts/HelveticaNeueCyr-Roman.woff2');
+    src: url('../fonts/HelveticaNeueCyr-Roman.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: "HelveticaNeue";
-  src: url("../fonts/HelveticaNeueCyr-Bold.woff2");
-  src: url("../fonts/HelveticaNeueCyr-Bold.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
+    font-family: 'HelveticaNeue';
+    src: url('../fonts/HelveticaNeueCyr-Bold.woff2');
+    src: url('../fonts/HelveticaNeueCyr-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: "Inter";
-  src: url("../fonts/Inter-Regular.ttf");
-  src: local("Inter"), local("Inter"),
-    url("../fonts/Inter-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
+    font-family: 'Inter';
+    src: url('../fonts/Inter-Regular.ttf');
+    src:
+        local('Inter'),
+        local('Inter'),
+        url('../fonts/Inter-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: "Inter";
-  src: url("../fonts/Inter-Bold.ttf");
-  src: local("Inter"), local("Inter"),
-    url("../fonts/Inter-Bold.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
+    font-family: 'Inter';
+    src: url('../fonts/Inter-Bold.ttf');
+    src:
+        local('Inter'),
+        local('Inter'),
+        url('../fonts/Inter-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: "Fira Sans";
-  src: local("Fira Sans"), local("Fira Sans"),
-    url("../fonts/FiraSans-Regular.ttf") format("truetype");
-  /* font-weight: bold; */
-  font-weight: 400;
-  font-style: normal;
+    font-family: 'Fira Sans';
+    src:
+        local('Fira Sans'),
+        local('Fira Sans'),
+        url('../fonts/FiraSans-Regular.ttf') format('truetype');
+    /* font-weight: bold; */
+    font-weight: 400;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: "Fira Sans";
-  src: local("Fira Sans Bold"), local("FiraSans-Bold"),
-    url("../fonts/FiraSans-Bold.ttf") format("truetype");
-  /* font-weight: bold; */
-  font-weight: 700;
-  font-style: normal;
+    font-family: 'Fira Sans';
+    src:
+        local('Fira Sans Bold'),
+        local('FiraSans-Bold'),
+        url('../fonts/FiraSans-Bold.ttf') format('truetype');
+    /* font-weight: bold; */
+    font-weight: 700;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: "Fira Sans";
-  src: local("Fira Sans Italic"), local("FiraSans-Italic"),
-    url("../fonts/FiraSans-Italic.ttf") format("truetype");
-  /* font-weight: bold; */
-  font-weight: 400;
-  font-style: italic;
+    font-family: 'Fira Sans';
+    src:
+        local('Fira Sans Italic'),
+        local('FiraSans-Italic'),
+        url('../fonts/FiraSans-Italic.ttf') format('truetype');
+    /* font-weight: bold; */
+    font-weight: 400;
+    font-style: italic;
 }
 
 @font-face {
-  font-family: "Segoe UI";
-  src: url("../fonts/SegoeUI.woff");
-  src: local("Segoe UI"), local("Segoe UI"),
-    url("../fonts/SegoeUI.woff") format("woff");
-  font-weight: 400;
-  font-style: normal;
+    font-family: 'Segoe UI';
+    src: url('../fonts/SegoeUI.woff');
+    src:
+        local('Segoe UI'),
+        local('Segoe UI'),
+        url('../fonts/SegoeUI.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: "Segoe UI";
-  src: url("../fonts/SegoeUI-Bold.woff");
-  src: local("Segoe UI Bold"), local("Segoe UI Bold"),
-    url("../fonts/SegoeUI-Bold.woff") format("woff");
-  font-weight: 700;
-  font-style: normal;
+    font-family: 'Segoe UI';
+    src: url('../fonts/SegoeUI-Bold.woff');
+    src:
+        local('Segoe UI Bold'),
+        local('Segoe UI Bold'),
+        url('../fonts/SegoeUI-Bold.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
 }

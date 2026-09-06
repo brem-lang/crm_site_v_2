@@ -1,160 +1,160 @@
 .comments-mainTitle {
-  width: 100%;
-  text-align: left;
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: bold;
-  font-size: 18px;
-  line-height: 27px;
-  color: #000;
-  border-bottom: 1px solid #cccccc;
+    width: 100%;
+    text-align: left;
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 27px;
+    color: #000;
+    border-bottom: 1px solid #cccccc;
 }
 
 .comments {
-  margin-top: 60px;
-  margin-bottom: 60px;
+    margin-top: 60px;
+    margin-bottom: 60px;
 }
 
 .comment-block {
-  margin-top: 15px;
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
+    margin-top: 15px;
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
 }
 
 .comment-block:nth-of-type(1) {
-  margin-top: 15px;
+    margin-top: 15px;
 }
 
 .comment-img {
-  border-radius: 50%;
-  display: block;
-  width: 41px;
-  height: 41px;
+    border-radius: 50%;
+    display: block;
+    width: 41px;
+    height: 41px;
 }
 
 .comment__name {
-  color: var(--Txt-collor, #323232);
-  font-family: "Segoe UI";
-  font-size: 13px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  letter-spacing: 0.39px;
+    color: var(--Txt-collor, #323232);
+    font-family: 'Segoe UI';
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    letter-spacing: 0.39px;
 }
 
 .comment__text {
-  color: var(--Txt-collor, #323232);
-  font-family: "Segoe UI";
-  font-size: 15px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 147%;
+    color: var(--Txt-collor, #323232);
+    font-family: 'Segoe UI';
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 147%;
 }
 .comment-mainPart {
-  margin-left: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  max-width: calc(100% - 57px);
+    margin-left: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: calc(100% - 57px);
 }
 
 .comment-like {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-family: "Segoe UI";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 100%;
-  margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Segoe UI';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 100%;
+    margin-top: 10px;
 }
 
 .comment-like__text {
-  color: #65676b;
-  font-family: "Segoe UI";
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 100%;
+    color: #65676b;
+    font-family: 'Segoe UI';
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 100%;
 }
 
 .comment-like__text span {
-  color: #65676b;
-  font-family: "Segoe UI";
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 100%;
+    color: #65676b;
+    font-family: 'Segoe UI';
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%;
 }
 
 .selected-rew {
-  font: inherit !important;
-  background: inherit;
-  color: #0064fa !important;
-  text-decoration: none;
-  cursor: pointer;
+    font: inherit !important;
+    background: inherit;
+    color: #0064fa !important;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .reporter .selected-rew {
-  color: #0064fa !important;
-  cursor: initial;
+    color: #0064fa !important;
+    cursor: initial;
 }
 
 .blue-text {
-  color: var(--blue-color);
+    color: var(--blue-color);
 }
 
 .reporter_mob {
-  display: none;
+    display: none;
 }
 
 .mobMinute {
-  display: none;
+    display: none;
 }
 
 .comment__text a.brandName {
-  font-weight: 400 !important;
+    font-weight: 400 !important;
 }
 
 .comment-add {
-  display: flex;
-  gap: 16px;
-  padding: 15px 0;
-  border-top: 1px solid #f0f2f5;
-  border-bottom: 1px solid #f0f2f5;
-  text-decoration: none;
+    display: flex;
+    gap: 16px;
+    padding: 15px 0;
+    border-top: 1px solid #f0f2f5;
+    border-bottom: 1px solid #f0f2f5;
+    text-decoration: none;
 }
 
 .comment-add__left {
 }
 
 .comment-add__right {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  border-radius: 18px;
-  background: #f0f2f5;
-  padding: 8px 10px 7px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    border-radius: 18px;
+    background: #f0f2f5;
+    padding: 8px 10px 7px 12px;
 }
 
 .comment-add__text {
-  color: #65676b;
-  font-family: "Segoe UI";
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 144%;
+    color: #65676b;
+    font-family: 'Segoe UI';
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 144%;
 }
 
 @media all and (max-width: 767px) {
-  .comments {
-    margin-top: 30px;
-  }
+    .comments {
+        margin-top: 30px;
+    }
 
-  .mobMinute {
-    display: block;
-  }
+    .mobMinute {
+        display: block;
+    }
 }
