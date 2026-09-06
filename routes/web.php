@@ -4,7 +4,11 @@ use App\Http\Controllers\SubmitLeadController;
 use Illuminate\Support\Facades\Route;
 
 // Welcome page
-Route::inertia('/', 'welcome')->name('home');
+Route::inertia('/nullypto', 'welcome')->name('home');
+
+Route::get('/', function () {
+    return rand(0, 1) ? redirect('/articles') : redirect('/prime-zone');
+})->name('landing');
 
 Route::post('/submit-lead', [SubmitLeadController::class, 'store'])
     ->middleware('throttle:10,1')
@@ -23,3 +27,4 @@ Route::get('/prime-zone', function () {
 });
 
 require __DIR__.'/settings.php';
+require __DIR__.'/admin.php';

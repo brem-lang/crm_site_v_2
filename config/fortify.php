@@ -77,6 +77,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Redirect Overrides
+    |--------------------------------------------------------------------------
+    |
+    | By default Fortify redirects to "home" (or "/") after most actions.
+    | The root "/" route is used as a public ad-traffic splitter for this
+    | app, so it must never be used as an authenticated redirect target.
+    | Override specific redirects here instead.
+    |
+    */
+
+    'redirects' => [
+        'logout' => '/login',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Fortify Routes Prefix / Subdomain
     |--------------------------------------------------------------------------
     |
