@@ -1,0 +1,660 @@
+.stepSection {
+    color: #000;
+    margin-top: 50px;
+}
+
+#deposit_screen {
+    max-height: 226px;
+}
+
+.stepSection_heroTitle {
+    font-family: 'Fira Sans';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 44px;
+    line-height: 115%;
+    text-align: center;
+    color: #f00;
+    margin-bottom: 50px;
+}
+
+.stepSection_mainDiv {
+    display: flex;
+}
+
+.stepSection_gradient {
+    width: 4px;
+    height: 125%;
+    position: absolute;
+    background: linear-gradient(180deg, rgba(25, 30, 104, 0.20) 0%, rgba(33, 150, 243, 0.20) 39.96%, rgba(1, 198, 90, 0.20) 75.04%);
+    margin-top: 20px;
+}
+
+.stepSection_gradient2 {
+    position: relative;
+    padding-bottom: 40px;
+}
+
+.stepSection_gradient2::before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-left: 4px solid transparent;
+    width: 1px;
+    min-height: 100px;
+    position: absolute;
+    background: linear-gradient(180deg, rgba(25, 30, 104, 0.20) 0%, rgba(33, 150, 243, 0.20) 39.96%, rgba(1, 198, 90, 0.20) 75.04%);
+    content: "";
+}
+
+.stepSection_blueDot {
+    width: 25px;
+    height: 25px;
+    background: #191E68;
+    border: 2px solid #4E53A0;
+    border-radius: 50%;
+    margin: -5px 8px 0px -30px;
+    z-index: 1;
+    position: absolute;
+}
+
+.stepSection_lightblueDot {
+    width: 25px;
+    height: 25px;
+    background: #2196F3;
+    border: 2px solid #53B3FF;
+    border-radius: 50%;
+    margin: 0 8px 23px -30px;
+    z-index: 1;
+    position: absolute;
+}
+
+.stepSection_greenDot {
+    width: 25px;
+    height: 25px;
+    background: #01C65A;
+    border: 2px solid #57E195;
+    border-radius: 50%;
+    margin-left: -30px;
+    margin-right: 8px;
+    z-index: 1;
+}
+
+.alertCont {
+    background: #fff;
+    z-index: 1;
+    position: relative;
+    padding-top: 60px;
+    padding-bottom: 30px;
+}
+
+.stepSection_textTitle.step3 {
+    background: #fff;
+    z-index: 1;
+    padding-left: 20px;
+}
+
+.stepSection_textDescriprion.step3 {
+    background: #fff;
+    z-index: 1;
+    padding-left: 20px;
+}
+
+.stepSection_stepsContainer {
+    border-radius: 20px;
+    max-width: 768px;
+    margin: 0 auto;
+}
+
+.stepSection_stepWrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.stepSection_stepWrapper.step1 {
+    margin: 0 0 30px 20px;
+}
+
+.stepSection_stepWrapper.step2 {
+    flex-direction: row-reverse;
+    margin: 30px 0 30px 20px;
+}
+
+.stepSection_stepWrapper.step3 {
+    margin: -10px 0 0;
+}
+
+.stepSection_textWrapper {
+    width: 100%;
+}
+
+.step1 .stepSection_textWrapper {
+    max-width: 318px;
+    padding: 10px 0 0;
+    margin-right: 10px;
+    margin-right: 12px;
+}
+
+.step2 .stepSection_textWrapper {
+    max-width: 318px;
+    padding: 10px 0 0;
+    margin-left: 0px;
+    margin-right: 12px;
+}
+
+.step3 .stepSection_textWrapper {
+    max-width: 410px;
+    padding: 10px 0 0;
+    margin-right: 30px;
+
+}
+
+.arrowDown {
+    text-align: center;
+    animation: arrows 1.5s infinite;
+}
+
+@keyframes arrows {
+    to {
+        transform: translateY(25px);
+        opacity: 0;
+    }
+}
+
+p.stepSection_textSubTitle {
+    font-family: "Proxima Nova";
+    font-style: normal;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 19px;
+    letter-spacing: 0.03em;
+    color: #8F8F8F;
+    text-transform: uppercase;
+    text-align: left;
+}
+
+.stepSection_textTitle {
+
+    font-family: "Proxima Nova";
+    font-style: normal;
+    font-weight: bold;
+    font-size: 26px;
+    line-height: 35px;
+    text-transform: uppercase;
+    color: var(--black-color);
+    position: relative;
+    padding-bottom: 10px;
+}
+
+p.stepSection_textDescriprion {
+    font-family: "Georgia";
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 27px;
+    color: var(--second-black);
+    position: relative;
+}
+
+.stepSection_textSubTitleCont {
+    display: flex;
+    /* align-items: center; */
+}
+
+.stepSection_textSubTitleContStep2 {
+    display: flex;
+    align-items: center;
+    margin-left: 2px;
+}
+
+.stepSection_textSubTitleContStep3 {
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+}
+
+.stepSection_stepManagerContainer img {
+    width: 300px;
+    height: 300px;
+}
+
+.stepSection_cardWrapper {
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.step1 .stepSection_cardWrapper {
+    max-width: 600px;
+}
+
+.step2 .stepSection_cardWrapper {
+    max-width: 600px;
+}
+
+.step3 .stepSection_cardWrapper {
+    max-width: 300px;
+    padding: 0;
+}
+
+.stepSection_descriptionContainer {
+    width: 100%;
+    margin-right: 5px;
+}
+
+.stepSection_descriptionTextWrapper {
+    background: rgba(56, 255, 24, 0.02);
+    border: 2px solid var(--green-color);
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.stepSection_descriptionTextWrapper:not(:first-of-type) {
+    margin-top: 5px;
+}
+
+p.stepSection_descriptionText {
+    font-family: "Proxima Nova";
+    font-style: normal;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 19px;
+    letter-spacing: 0.03em;
+    color: var(--second-black);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0px 10px;
+}
+
+.stepSection_descriptionTextWrapper.part1 {
+    height: 30%;
+}
+
+.stepSection_descriptionTextWrapper.part2 {
+    height: 33%;
+}
+
+.step2 .stepSection_descriptionTextWrapper {
+    height: 58%;
+    width: 100%;
+}
+
+.stepSection_formContainer {
+    max-width: 274px;
+    position: relative;
+}
+
+.formVector1 {
+    position: absolute;
+    top: 23%;
+    left: -28px;
+    animation: bounce 1600ms infinite;
+}
+
+.formVector2 {
+    position: absolute;
+    top: 38%;
+    left: -28px;
+    animation: bounce 1600ms infinite;
+}
+
+.depVector {
+    display: block;
+    position: absolute;
+    top: 66.5%;
+    right: 185px;
+    z-index: 9;
+    animation: bounce 1600ms infinite;
+}
+
+.depVectorMob {
+    display: none;
+}
+
+@keyframes bounce {
+    50% {
+        transform: translateX(5px);
+    }
+}
+
+@media all and (max-width: 1199px) {
+    .depVector {
+        display: none;
+    }
+
+    .depVectorMob {
+        display: block;
+        position: absolute;
+        top: 68%;
+        left: -35px;
+        z-index: 9;
+        animation: bounce 1600ms infinite;
+    }
+}
+
+@media all and (max-width: 1070px) {
+    .stepSection_stepsContainer {
+        margin: 0;
+    }
+}
+
+@media all and (max-width: 1024px) {
+    .stepSection_descriptionText {
+        font-size: 16px;
+        line-height: 19px;
+    }
+}
+
+@media all and (width: 1024px) {
+    .stepSection_gradient2::before {
+        height: 218%;
+    }
+}
+
+@media (max-width: 767px) {
+    .stepSection {
+        margin-bottom: 0px;
+    }
+
+    .alertCont {
+        padding-top: 30px;
+        padding-bottom: 30px;
+    }
+
+    #deposit_screen {
+        max-height: 226px;
+        max-width: 159px;
+    }
+
+    .stepSection_stepManagerContainer img {
+        width: 250px;
+        height: 250px;
+    }
+
+    .stepSection_formContainerImg.dep {
+        max-width: 159px;
+    }
+
+    .formVector2 {
+        top: 57%;
+    }
+
+    .data__title {
+        margin-bottom: 0;
+    }
+
+    .stepSection_heroTitle {
+        margin-bottom: 25px;
+    }
+
+    .step2 .stepSection_descriptionTextWrapper {
+        width: 100%;
+        height: 97%;
+    }
+
+    .stepSection_textSubTitleCont {
+        margin-left: 30px;
+    }
+
+    .stepSection_textSubTitleContStep2 {
+        margin-left: 30px;
+    }
+
+    .stepSection_textSubTitleContStep3 {
+        margin-left: 30px;
+    }
+
+    .stepSection_stepWrapper.step3 {
+        background: #fff;
+        z-index: 1;
+        position: relative;
+    }
+
+    .stepSection_textTitle {
+        margin-left: 30px;
+        text-align: left;
+    }
+
+    .stepSection_gradient2::before {
+        margin-left: 8px;
+        margin-top: 0px;
+    }
+
+    .stepSection_blueDot {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+        margin-top: 0;
+    }
+
+    .step1 .stepSection_cardWrapper {
+        margin-left: 28px;
+        max-width: 314px;
+    }
+
+    .step2 .stepSection_cardWrapper {
+        margin-left: 28px;
+        max-width: 314px;
+    }
+
+    p.stepSection_textSubTitle {
+        font-size: 12px;
+        line-height: 16px;
+        letter-spacing: 0.023em;
+    }
+
+    .stepSection_lightblueDot {
+        width: 20px;
+        height: 20px;
+        margin: 23px 0 23px -30px;
+    }
+
+    .stepSection_greenDot {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+    }
+
+    .stepSection_textTitle.step3 {
+        padding-left: 30px;
+        margin-left: 0;
+    }
+
+    .stepSection_textDescriprion.step3 {
+        margin-left: 0;
+        padding-left: 30px;
+    }
+
+    .stepSection_formContainerImg.reg {
+        max-width: 159px;
+    }
+
+    p.stepSection_textDescriprion {
+        padding-left: 30px;
+        text-align: left;
+    }
+
+    .stepSection_stepWrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .step1 .stepSection_textWrapper {
+        text-align: center;
+        max-width: 100%;
+        margin-right: 0;
+        padding: 0;
+        margin-right: 0;
+    }
+
+    .step2 .stepSection_textWrapper {
+        /* text-align: center; */
+        margin-left: 0;
+        padding: 0;
+        max-width: 100%;
+        margin-right: 0;
+    }
+
+    .step3 .stepSection_textWrapper {
+        text-align: center;
+        max-width: 100%;
+        margin-right: 0;
+        padding: 0;
+    }
+
+    .stepSection_depScreenContainer {
+        max-width: 159px;
+    }
+
+    .stepSection_stepWrapper.step2 {
+        flex-direction: column-reverse;
+    }
+
+    .stepSection_stepWrapper.step3 {
+        padding: 0;
+    }
+
+    .stepSection_cardWrapper {
+        margin-top: 10px;
+    }
+
+    p.stepSection_descriptionText {
+        font-size: 12px;
+        line-height: 14px;
+    }
+}
+
+@media (max-width: 767px) {
+    .stepSection_stepWrapper.step1 {
+        margin: 0 0 20px;
+    }
+
+    .stepSection_stepWrapper.step2 {
+        margin: 15px 0 20px;
+    }
+
+    .stepSection_stepWrapper.step3 {
+        margin: 0px 0 0px;
+    }
+
+    .stepSection_stepsContainer {
+        padding: 0;
+    }
+
+    .stepSection_textSubTitle {
+        font-size: 14px;
+        line-height: 16px;
+    }
+
+    .stepSection_descriptionTextWrapper.part1 {
+        height: 49%;
+    }
+
+    .stepSection_descriptionTextWrapper.part2 {
+        height: 47%;
+    }
+
+    .stepSection_formContainerImg .reg {
+        width: 190px;
+        height: 270px;
+    }
+
+    .stepSection_formContainerImg .dep {
+        width: 190px;
+        height: 210px;
+    }
+
+    @keyframes arrows {
+        to {
+            transform: translateY(15px);
+            opacity: 0;
+        }
+    }
+
+    .formVector1 {
+        top: 34%;
+    }
+
+    .depVectorMob {
+        top: 66.5%;
+        width: 40px;
+        left: -35px;
+    }
+
+    .stepSection_descriptionText {
+        font-size: 12px;
+        line-height: 15px;
+        padding: 0 10px;
+    }
+}
+
+@media all and (max-width: 560px) {
+    .stepSection_gradient {
+        height: 150%;
+    }
+}
+
+@media all and (max-width: 475px) {
+    .stepSection_lightblueDot {
+        margin-top: -2px;
+    }
+
+
+
+
+
+    @media all and (max-width: 460px) {
+        .arrowDown img {
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .depVectorMob {
+            top: 65%;
+        }
+    }
+
+    @media all and (max-width: 400px) {
+        .stepSection_gradient {
+            height: 205%;
+        }
+
+        .stepSection_heroTitle {
+            font-size: 40px;
+            line-height: 46px;
+            margin-bottom: 25px;
+        }
+
+        p.stepSection_textSubTitle {
+            font-size: 12px;
+            line-height: 16px;
+            letter-spacing: 0.023em;;
+        }
+
+        .stepSection_textTitle {
+            font-size: 24px;
+            line-height: 29px;
+            margin-bottom: 0px;
+        }
+
+        p.stepSection_textDescriprion {
+            font-size: 16px;
+            line-height: 24px;
+        }
+
+        .step3 .stepSection_cardWrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stepSection_stepManagerContainer img {
+            width: 250px;
+            height: 250px;
+        }
+    }

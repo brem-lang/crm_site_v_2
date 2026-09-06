@@ -4,7 +4,11 @@ use App\Http\Controllers\GeoController;
 use App\Http\Controllers\SubmitLeadController;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'welcome')->name('home');
+Route::get('/', function () {
+    return rand(0, 1)
+        ? redirect('/articles')
+        : redirect('/prime-zone');
+})->name('home');
 
 Route::post('/submit-lead', [SubmitLeadController::class, 'store'])
     ->middleware('throttle:10,1')
@@ -16,6 +20,14 @@ Route::get('/geo/country-code', [GeoController::class, 'countryCode'])
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
+});
+
+Route::get('/articles', function () {
+    return redirect('/article-template/index.html');
+});
+
+Route::get('/prime-zone', function () {
+    return redirect('/vortex-template/index.html');
 });
 
 require __DIR__.'/settings.php';
