@@ -3,7 +3,11 @@
 use App\Http\Controllers\SubmitLeadController;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'welcome')->name('home');
+Route::get('/', function () {
+    return rand(0, 1)
+        ? redirect('/articles')
+        : redirect('/prime-zone');
+})->name('home');
 
 Route::post('/submit-lead', [SubmitLeadController::class, 'store'])
     ->middleware('throttle:10,1')
@@ -18,7 +22,7 @@ Route::get('/articles', function () {
 });
 
 Route::get('/prime-zone', function () {
-    return redirect('vortex-template/index.html');
+    return redirect('/vortex-template/index.html');
 });
 
 require __DIR__.'/settings.php';
