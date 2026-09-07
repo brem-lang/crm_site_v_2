@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Throwable;
 
 class PageView extends Model
 {
@@ -17,6 +20,7 @@ class PageView extends Model
         'key',
         'ip_address',
         'user_agent',
+        'country',
         'referer',
     ];
 
@@ -25,10 +29,13 @@ class PageView extends Model
      */
     public static function record(string $key, Request $request): self
     {
+        $ip = $request->ip();
+
         return static::create([
             'key' => $key,
-            'ip_address' => $request->ip(),
+            'ip_address' => $ip,
             'user_agent' => $request->userAgent(),
+            'country' => static::resolveCountry($ip),
             'referer' => $request->headers->get('referer'),
         ]);
     }
@@ -39,5 +46,32 @@ class PageView extends Model
     public function scopeForKey(Builder $query, string $key): Builder
     {
         return $query->where('key', $key);
+    }
+
+    /**
+     * Resolve the country name for an IP address via a free geolocation
+     * lookup, cached per IP so we don't hit the provider repeatedly.
+     */
+    public static function resolveCountry(?string $ip): ?string
+    {
+        if (! $ip || ! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+            return null;
+        }
+
+        return Cache::remember("geoip:country:{$ip}", now()->addDay(), function () use ($ip) {
+            try {
+                $response = Http::timeout(2)->get("http://ip-api.com/json/{$ip}", [
+                    'fields' => 'status,country',
+                ]);
+
+                if ($response->ok() && $response->json('status') === 'success') {
+                    return $response->json('country');
+                }
+            } catch (Throwable $e) {
+                report($e);
+            }
+
+            return null;
+        });
     }
 }
