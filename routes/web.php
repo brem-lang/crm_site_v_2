@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GeoController;
 use App\Http\Controllers\SubmitLeadController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -40,12 +41,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
-Route::get('/articles', function () {
-    return redirect('/article-template/index.html');
+Route::get('/articles', function (Request $request) {
+    return redirect('/article-template/index.html?click_id='.$request->attributes->get('click_id'));
 })->middleware('track.view:articles');
 
-Route::get('/prime-zone', function () {
-    return redirect('/vortex-template/index.html');
+Route::get('/prime-zone', function (Request $request) {
+    return redirect('/vortex-template/index.html?click_id='.$request->attributes->get('click_id'));
 })->middleware('track.view:prime-zone');
 
 require __DIR__.'/settings.php';

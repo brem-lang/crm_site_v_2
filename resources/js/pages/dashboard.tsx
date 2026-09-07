@@ -37,6 +37,7 @@ type PageViewStats = {
 };
 
 type Visit = {
+    click_id: string;
     key: string;
     ip_address: string | null;
     country: string | null;
@@ -318,6 +319,9 @@ export default function Dashboard({
                                 <thead>
                                     <tr className="border-sidebar-border/70 dark:border-sidebar-border border-b text-left">
                                         <th className="px-4 py-2 font-medium">
+                                            Click ID
+                                        </th>
+                                        <th className="px-4 py-2 font-medium">
                                             IP Address
                                         </th>
                                         <th className="px-4 py-2 font-medium">
@@ -352,6 +356,9 @@ export default function Dashboard({
                                                 key={`${visit.key}-${visit.created_at}-${index}`}
                                                 className="border-sidebar-border/70 dark:border-sidebar-border border-b last:border-0"
                                             >
+                                                <td className="px-4 py-2 font-mono text-xs font-medium">
+                                                    {visit.click_id}
+                                                </td>
                                                 <td className="px-4 py-2 font-medium">
                                                     {visit.ip_address ?? '—'}
                                                 </td>
@@ -398,6 +405,15 @@ export default function Dashboard({
                                                             <DropdownMenuItem
                                                                 onSelect={() =>
                                                                     navigator.clipboard?.writeText(
+                                                                        visit.click_id,
+                                                                    )
+                                                                }
+                                                            >
+                                                                Copy click ID
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem
+                                                                onSelect={() =>
+                                                                    navigator.clipboard?.writeText(
                                                                         visit.ip_address ??
                                                                             '',
                                                                     )
@@ -431,7 +447,7 @@ export default function Dashboard({
                                     {recentVisits.data.length === 0 && (
                                         <tr>
                                             <td
-                                                colSpan={7}
+                                                colSpan={8}
                                                 className="text-muted-foreground px-4 py-6 text-center"
                                             >
                                                 No visits yet.

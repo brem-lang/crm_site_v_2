@@ -25,6 +25,17 @@ class PageView extends Model
     ];
 
     /**
+     * Assign an incremental, human-readable click_id once the row's own
+     * auto-increment id is known.
+     */
+    protected static function booted(): void
+    {
+        static::created(function (PageView $pageView) {
+            $pageView->forceFill(['click_id' => "click_id_{$pageView->id}"])->saveQuietly();
+        });
+    }
+
+    /**
      * Log a view of the given page for the current request.
      */
     public static function record(string $key, Request $request): self
@@ -46,6 +57,17 @@ class PageView extends Model
     public function scopeForKey(Builder $query, string $key): Builder
     {
         return $query->where('key', $key);
+    }
+
+    /**
+     * Mark the page view behind the given click_id as converted into a
+     * lead, so it isn't double-counted on a later submission attempt.
+     */
+    public static function markConverted(string $clickId): void
+    {
+        static::where('click_id', $clickId)
+            ->whereNull('converted_at')
+            ->update(['converted_at' => now()]);
     }
 
     /**

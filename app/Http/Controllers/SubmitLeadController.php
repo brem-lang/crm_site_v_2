@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PageView;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -17,6 +18,7 @@ class SubmitLeadController extends Controller
             'email' => ['required', 'email', 'max:255'],
             'mobile' => ['required', 'string', 'max:32'],
             'country_code' => ['required', 'string', 'size:2'],
+            'click_id' => ['nullable', 'string', 'max:255'],
         ]);
 
         $payload = [
@@ -60,6 +62,10 @@ class SubmitLeadController extends Controller
                 'success' => false,
                 'message' => __('We could not submit your information right now. Please try again in a moment.'),
             ], 502);
+        }
+
+        if (! empty($validated['click_id'])) {
+            PageView::markConverted($validated['click_id']);
         }
 
         return response()->json([

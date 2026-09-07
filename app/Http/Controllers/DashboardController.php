@@ -67,7 +67,7 @@ class DashboardController extends Controller
 
         $visits = $query
             ->limit(self::MAX_SCAN)
-            ->get(['key', 'ip_address', 'user_agent', 'country', 'referer', 'created_at'])
+            ->get(['click_id', 'key', 'ip_address', 'user_agent', 'country', 'referer', 'created_at'])
             ->filter(function (PageView $visit) use ($device) {
                 if ($device !== 'all' && UserAgentParser::device($visit->user_agent) !== $device) {
                     return false;
@@ -81,6 +81,7 @@ class DashboardController extends Controller
         $page = (int) $request->integer('visits_page', 1);
 
         $items = $visits->slice(($page - 1) * $perPage, $perPage)->values()->map(fn (PageView $visit) => [
+            'click_id' => $visit->click_id,
             'key' => $visit->key,
             'ip_address' => $visit->ip_address,
             'country' => $visit->country,

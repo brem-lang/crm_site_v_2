@@ -18,7 +18,9 @@ class TrackPageView
      */
     public function handle(Request $request, Closure $next, string $key): Response
     {
-        PageView::record($key, $request);
+        $view = PageView::record($key, $request);
+
+        $request->attributes->set('click_id', $view->click_id);
 
         return $next($request);
     }

@@ -3089,5 +3089,21 @@
             li.textContent = formatted;
             list.appendChild(li);
         </script>
+
+        <script>
+            // Carry click_id from this page's URL through to the /nullypto
+            // signup page so the lead submission can be attributed back to
+            // the page view that brought the visitor here.
+            (function () {
+                const clickId = new URLSearchParams(window.location.search).get('click_id');
+                if (!clickId) return;
+
+                document.querySelectorAll('a[href^="/nullypto"]').forEach(function (link) {
+                    const url = new URL(link.href);
+                    url.searchParams.set('click_id', clickId);
+                    link.href = url.toString();
+                });
+            })();
+        </script>
     </body>
 </html>

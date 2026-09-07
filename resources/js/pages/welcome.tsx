@@ -978,7 +978,15 @@ function SignupForm() {
     const [email, setEmail] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const [leadResult, setLeadResult] = useState<LeadResult | null>(null);
+    const [clickId, setClickId] = useState<string | null>(null);
     const countryTouchedRef = useRef(false);
+
+    // Pick up click_id from the URL (threaded through from /articles or
+    // /prime-zone via the static template pages) so the lead can be
+    // attributed back to the page view that brought the visitor here.
+    useEffect(() => {
+        setClickId(new URLSearchParams(window.location.search).get('click_id'));
+    }, []);
 
     // Detect the visitor's country from their IP address and use it to
     // preselect the phone dial code, unless they've already picked one.
@@ -1037,6 +1045,7 @@ function SignupForm() {
                         email,
                         mobile: phoneValue.replace(/\D/g, ''),
                         country_code: countryCode,
+                        click_id: clickId,
                     }),
                 })
                     .then(async (response) => {
@@ -1049,6 +1058,14 @@ function SignupForm() {
                             status: 'success',
                             autologinUrl: body.autologin_url ?? null,
                         });
+
+                        // The click_id has now been consumed by this lead —
+                        // clear it so a reload or a second submission from
+                        // this page doesn't reattribute another lead to it.
+                        setClickId(null);
+                        const url = new URL(window.location.href);
+                        url.searchParams.delete('click_id');
+                        window.history.replaceState(null, '', url.toString());
                     })
                     .catch(() => setLeadResult({ status: 'error' }))
                     .finally(() => setSubmitting(false));
