@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 // Welcome page
 Route::inertia('/nullypto', 'welcome')->name('home');
 
-Route::get('/', function () {
+Route::get('/', function (Request $request) {
     $destination = DB::transaction(function () {
         $counter = DB::table('redirect_counters')
             ->where('key', 'landing_split')
@@ -25,6 +25,12 @@ Route::get('/', function () {
 
         return $isEven ? '/articles' : '/prime-zone';
     });
+
+    // Preserve the click_id an upstream ad-tracking redirect (e.g. koventrax)
+    // handed us, so it survives the internal landing-split redirect.
+    if ($clickId = $request->query('click_id')) {
+        $destination .= '?click_id='.urlencode($clickId);
+    }
 
     return redirect($destination);
 })->name('landing');
