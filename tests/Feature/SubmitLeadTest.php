@@ -12,6 +12,7 @@ test('submitting a lead forwards click_id to the affiliate API and marks the pag
         'key' => 'articles',
         'ip_address' => '127.0.0.1',
         'user_agent' => 'Test',
+        'click_id' => 'click_id_manual',
     ]);
 
     $response = $this->postJson('/submit-lead', [

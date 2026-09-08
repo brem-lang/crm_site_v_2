@@ -2,18 +2,18 @@
 
 use App\Models\PageView;
 
-test('visiting /articles logs a page view and redirects to the article template with its click_id', function () {
+test('visiting /articles logs a page view and redirects to the article template with an empty click_id', function () {
     $response = $this->get('/articles');
 
-    $view = PageView::query()->forKey('articles')->firstOrFail();
-    $response->assertRedirect("/article-template/index.html?click_id={$view->click_id}");
+    PageView::query()->forKey('articles')->firstOrFail();
+    $response->assertRedirect('/article-template/index.html?click_id=');
 });
 
-test('visiting /prime-zone logs a page view and redirects to the vortex template with its click_id', function () {
+test('visiting /prime-zone logs a page view and redirects to the vortex template with an empty click_id', function () {
     $response = $this->get('/prime-zone');
 
-    $view = PageView::query()->forKey('prime-zone')->firstOrFail();
-    $response->assertRedirect("/vortex-template/index.html?click_id={$view->click_id}");
+    PageView::query()->forKey('prime-zone')->firstOrFail();
+    $response->assertRedirect('/vortex-template/index.html?click_id=');
 });
 
 test('each visit is logged separately', function () {

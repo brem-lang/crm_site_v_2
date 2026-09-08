@@ -18,22 +18,12 @@ class PageView extends Model
      */
     protected $fillable = [
         'key',
+        'click_id',
         'ip_address',
         'user_agent',
         'country',
         'referer',
     ];
-
-    /**
-     * Assign an incremental, human-readable click_id once the row's own
-     * auto-increment id is known.
-     */
-    protected static function booted(): void
-    {
-        static::created(function (PageView $pageView) {
-            $pageView->forceFill(['click_id' => "click_id_{$pageView->id}"])->saveQuietly();
-        });
-    }
 
     /**
      * Log a view of the given page for the current request.
