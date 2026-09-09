@@ -46,10 +46,20 @@ Route::get('/', function (Request $request, GeoLocator $geoLocator) {
         return $isEven ? '/articles' : '/prime-zone';
     });
 
-    // Preserve the click_id an upstream ad-tracking redirect (e.g. koventrax)
-    // handed us, so it survives the internal landing-split redirect.
-    if ($clickId = $request->query('click_id')) {
-        $destination .= '?click_id='.urlencode($clickId);
+    // Preserve query params that need to survive the internal
+    // landing-split redirect: click_id, forwarded from an upstream
+    // ad-tracking redirect (e.g. koventrax), and debug_country, the
+    // local-only override for simulating a visitor's country (see
+    // GeoLocator::countryCode()) — without forwarding it here, a bucket
+    // decided by debug_country would land on /articles or /prime-zone
+    // with no way to tell them to keep simulating that country.
+    $forwardedParams = array_filter([
+        'click_id' => $request->query('click_id'),
+        'debug_country' => $request->query('debug_country'),
+    ]);
+
+    if ($forwardedParams) {
+        $destination .= '?'.http_build_query($forwardedParams);
     }
 
     return redirect($destination);

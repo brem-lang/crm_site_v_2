@@ -35,10 +35,11 @@ test('the landing split alternates independently per country bucket', function (
     $this->get(route('landing'))->assertRedirect('/prime-zone');
 
     // Canada visitors get their own counter, starting fresh at /articles
-    // regardless of where the default bucket currently is.
-    $this->get(route('landing', ['debug_country' => 'CA']))->assertRedirect('/articles');
-    $this->get(route('landing', ['debug_country' => 'CA']))->assertRedirect('/prime-zone');
-    $this->get(route('landing', ['debug_country' => 'CA']))->assertRedirect('/articles');
+    // regardless of where the default bucket currently is. debug_country
+    // is forwarded along so the next hop keeps simulating that country.
+    $this->get(route('landing', ['debug_country' => 'CA']))->assertRedirect('/articles?debug_country=CA');
+    $this->get(route('landing', ['debug_country' => 'CA']))->assertRedirect('/prime-zone?debug_country=CA');
+    $this->get(route('landing', ['debug_country' => 'CA']))->assertRedirect('/articles?debug_country=CA');
 
     // The default bucket keeps alternating undisturbed by the Canada hits.
     $this->get(route('landing'))->assertRedirect('/articles');
