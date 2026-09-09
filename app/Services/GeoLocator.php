@@ -32,6 +32,19 @@ class GeoLocator
             return strtoupper((string) $request->string('debug_country'));
         }
 
+        // Cloudflare already resolves the visitor's country on every
+        // proxied request and hands it to us for free in this header — no
+        // network round-trip, no third-party API, no rate limit. "XX" means
+        // Cloudflare couldn't determine it and "T1" means Tor; treat both
+        // as unknown and fall through to the IP-based lookup below (which
+        // also covers local dev and any request that reaches us directly,
+        // bypassing Cloudflare).
+        $cfCountry = $request->header('CF-IPCountry');
+
+        if (is_string($cfCountry) && preg_match('/^[A-Za-z]{2}$/', $cfCountry) && ! in_array(strtoupper($cfCountry), ['XX', 'T1'], true)) {
+            return strtoupper($cfCountry);
+        }
+
         $ip = $this->resolveClientIp($request);
 
         if (! $ip) {
@@ -39,10 +52,12 @@ class GeoLocator
         }
 
         return Cache::remember("geo:country:{$ip}", now()->addHours(6), function () use ($ip) {
-            // ip-api.com's free tier (no signup/key needed, HTTP only, ~45
-            // req/min from this server's IP) — switched from ipapi.co,
-            // whose free quota was exhausted and returning 429 for every
-            // lookup.
+            // Fallback for requests that don't carry CF-IPCountry (local
+            // dev, or anything reaching the origin without going through
+            // Cloudflare). ip-api.com's free tier (no signup/key needed,
+            // HTTP only, ~45 req/min from this server's IP) — switched from
+            // ipapi.co, whose free quota was exhausted and returning 429
+            // for every lookup.
             try {
                 $response = Http::timeout(3)->get("http://ip-api.com/json/{$ip}", [
                     'fields' => 'status,countryCode',
