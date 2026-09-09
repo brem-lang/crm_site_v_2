@@ -21,7 +21,9 @@ import { Head, Link, router, usePoll } from '@inertiajs/react';
 import {
     ChevronLeft,
     ChevronRight,
+    Flag,
     Laptop,
+    Leaf,
     MoreHorizontal,
     Newspaper,
     Smartphone,
@@ -67,7 +69,7 @@ type PaginatedVisits = {
 type VisitFilters = {
     visit_page: string;
     device: string;
-    country: string | null;
+    search: string | null;
     from: string | null;
     to: string | null;
     per_page: number;
@@ -76,7 +78,9 @@ type VisitFilters = {
 type DashboardProps = {
     pageViews: {
         articles: PageViewStats;
+        'articles-canada': PageViewStats;
         'prime-zone': PageViewStats;
+        'prime-zone-canada': PageViewStats;
     };
     recentVisits: PaginatedVisits;
     filters: VisitFilters;
@@ -93,46 +97,77 @@ const deviceIcons: Record<string, typeof Laptop> = {
     Tablet: Tablet,
 };
 
-function PageViewCard({
-    title,
+function CountryStat({
+    label,
     href,
     icon: Icon,
     stats,
 }: {
-    title: string;
+    label: string;
     href: string;
-    icon: typeof Newspaper;
+    icon: typeof Leaf;
     stats: PageViewStats;
 }) {
     return (
+        <a
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+            className="border-sidebar-border/70 dark:border-sidebar-border hover:bg-accent/50 flex flex-col gap-1 rounded-lg border p-3 transition-colors"
+        >
+            <span className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
+                <Icon className="size-3.5" />
+                {label}
+            </span>
+            <span className="text-2xl font-semibold">
+                {stats.total.toLocaleString()}
+            </span>
+            <span className="text-muted-foreground text-xs">
+                {stats.today.toLocaleString()} click
+                {stats.today === 1 ? '' : 's'} today
+            </span>
+            <span className="text-muted-foreground text-[11px]">
+                Last:{' '}
+                {stats.last_viewed_at
+                    ? new Date(stats.last_viewed_at).toLocaleString()
+                    : '—'}
+            </span>
+        </a>
+    );
+}
+
+function FunnelCard({
+    title,
+    icon: Icon,
+    uk,
+    canada,
+}: {
+    title: string;
+    icon: typeof Newspaper;
+    uk: { href: string; stats: PageViewStats };
+    canada: { href: string; stats: PageViewStats };
+}) {
+    return (
         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
-            <CardHeader className="flex-row items-center justify-between space-y-0">
-                <CardTitle className="flex items-center gap-2">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-sm font-medium">
                     <Icon className="text-muted-foreground size-4" />
-                    <a
-                        href={href}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="hover:underline"
-                    >
-                        {title}
-                    </a>
+                    {title}
                 </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-1">
-                <div className="text-3xl font-semibold">
-                    {stats.total.toLocaleString()}
-                </div>
-                <p className="text-muted-foreground text-sm">
-                    {stats.today.toLocaleString()} click
-                    {stats.today === 1 ? '' : 's'} today
-                </p>
-                <p className="text-muted-foreground text-xs">
-                    Last clicked{' '}
-                    {stats.last_viewed_at
-                        ? new Date(stats.last_viewed_at).toLocaleString()
-                        : '—'}
-                </p>
+            <CardContent className="grid grid-cols-2 gap-3">
+                <CountryStat
+                    label="United Kingdom"
+                    href={uk.href}
+                    icon={Flag}
+                    stats={uk.stats}
+                />
+                <CountryStat
+                    label="Canada"
+                    href={canada.href}
+                    icon={Leaf}
+                    stats={canada.stats}
+                />
             </CardContent>
         </Card>
     );
@@ -145,7 +180,7 @@ export default function Dashboard({
 }: DashboardProps) {
     usePoll(10000, { only: ['pageViews', 'recentVisits'] });
 
-    const [countryInput, setCountryInput] = useState(filters.country ?? '');
+    const [searchInput, setSearchInput] = useState(filters.search ?? '');
 
     function updateFilters(partial: Partial<VisitFilters>) {
         const next = { ...filters, ...partial };
@@ -155,7 +190,7 @@ export default function Dashboard({
             {
                 visit_page: next.visit_page === 'all' ? undefined : next.visit_page,
                 device: next.device === 'all' ? undefined : next.device,
-                country: next.country || undefined,
+                search: next.search || undefined,
                 from: next.from || undefined,
                 to: next.to || undefined,
                 per_page: next.per_page,
@@ -164,20 +199,20 @@ export default function Dashboard({
         );
     }
 
-    // Debounce the free-text country filter so we're not firing a
-    // request on every keystroke.
+    // Debounce the free-text search filter so we're not firing a request
+    // on every keystroke.
     useEffect(() => {
-        if (countryInput === (filters.country ?? '')) {
+        if (searchInput === (filters.search ?? '')) {
             return;
         }
 
         const timeout = setTimeout(() => {
-            updateFilters({ country: countryInput || null });
+            updateFilters({ search: searchInput || null });
         }, 400);
 
         return () => clearTimeout(timeout);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [countryInput]);
+    }, [searchInput]);
 
     const numberLinks = recentVisits.links.slice(1, -1);
 
@@ -186,17 +221,26 @@ export default function Dashboard({
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className="grid auto-rows-min gap-4 md:grid-cols-2">
-                    <PageViewCard
+                    <FunnelCard
                         title="Articles"
-                        href="/articles"
                         icon={Newspaper}
-                        stats={pageViews.articles}
+                        uk={{ href: '/articles', stats: pageViews.articles }}
+                        canada={{
+                            href: '/articles?debug_country=CA',
+                            stats: pageViews['articles-canada'],
+                        }}
                     />
-                    <PageViewCard
+                    <FunnelCard
                         title="Prime Zone"
-                        href="/prime-zone"
                         icon={Sparkles}
-                        stats={pageViews['prime-zone']}
+                        uk={{
+                            href: '/prime-zone',
+                            stats: pageViews['prime-zone'],
+                        }}
+                        canada={{
+                            href: '/prime-zone?debug_country=CA',
+                            stats: pageViews['prime-zone-canada'],
+                        }}
                     />
                 </div>
 
@@ -212,15 +256,15 @@ export default function Dashboard({
                         <div className="flex flex-wrap items-end gap-4">
                             <div className="grid gap-1.5">
                                 <Label className="text-muted-foreground text-xs font-normal">
-                                    Country
+                                    Search
                                 </Label>
                                 <Input
-                                    placeholder="e.g. United States"
-                                    value={countryInput}
+                                    placeholder="Country or click ID"
+                                    value={searchInput}
                                     onChange={(e) =>
-                                        setCountryInput(e.target.value)
+                                        setSearchInput(e.target.value)
                                     }
-                                    className="h-8 w-48"
+                                    className="h-8 w-56"
                                 />
                             </div>
 
@@ -242,10 +286,16 @@ export default function Dashboard({
                                             All pages
                                         </SelectItem>
                                         <SelectItem value="articles">
-                                            Articles
+                                            Articles (UK)
+                                        </SelectItem>
+                                        <SelectItem value="articles-canada">
+                                            Articles (Canada)
                                         </SelectItem>
                                         <SelectItem value="prime-zone">
-                                            Prime Zone
+                                            Prime Zone (UK)
+                                        </SelectItem>
+                                        <SelectItem value="prime-zone-canada">
+                                            Prime Zone (Canada)
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>

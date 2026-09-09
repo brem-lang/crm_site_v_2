@@ -19,6 +19,22 @@ class DashboardController extends Controller
     private const MAX_SCAN = 2000;
 
     /**
+     * The selectable "page" filter options, mapped to the underlying page
+     * key plus (where relevant) a country. The Canada template variants
+     * share their page key with the default variant and are only
+     * distinguished by the visitor's country, so they aren't a distinct
+     * `key` value in the database.
+     *
+     * @var array<string, array{key: string, country: ?string}>
+     */
+    private const PAGE_FILTERS = [
+        'articles' => ['key' => 'articles', 'country' => null],
+        'articles-canada' => ['key' => 'articles', 'country' => 'Canada'],
+        'prime-zone' => ['key' => 'prime-zone', 'country' => null],
+        'prime-zone-canada' => ['key' => 'prime-zone', 'country' => 'Canada'],
+    ];
+
+    /**
      * Display the dashboard.
      */
     public function index(Request $request): Response
@@ -26,13 +42,15 @@ class DashboardController extends Controller
         return Inertia::render('dashboard', [
             'pageViews' => [
                 'articles' => $this->statsFor('articles'),
+                'articles-canada' => $this->statsFor('articles', country: 'Canada'),
                 'prime-zone' => $this->statsFor('prime-zone'),
+                'prime-zone-canada' => $this->statsFor('prime-zone', country: 'Canada'),
             ],
             'recentVisits' => $this->visitsFor($request),
             'filters' => [
                 'visit_page' => $request->string('visit_page')->value() ?: 'all',
                 'device' => $request->string('device')->value() ?: 'all',
-                'country' => $request->string('country')->value() ?: null,
+                'search' => $request->string('search')->value() ?: null,
                 'from' => $request->string('from')->value() ?: null,
                 'to' => $request->string('to')->value() ?: null,
                 'per_page' => (int) $request->integer('per_page', 10),
@@ -48,7 +66,15 @@ class DashboardController extends Controller
         $query = PageView::query()->latest('created_at');
 
         if ($request->filled('visit_page') && $request->string('visit_page')->value() !== 'all') {
-            $query->forKey((string) $request->string('visit_page'));
+            $filter = self::PAGE_FILTERS[(string) $request->string('visit_page')] ?? null;
+
+            if ($filter) {
+                $query->forKey($filter['key']);
+
+                if ($filter['country']) {
+                    $query->where('country', $filter['country']);
+                }
+            }
         }
 
         if ($request->filled('from')) {
@@ -59,8 +85,13 @@ class DashboardController extends Controller
             $query->whereDate('created_at', '<=', $request->date('to'));
         }
 
-        if ($request->filled('country')) {
-            $query->where('country', 'like', '%'.$request->string('country').'%');
+        if ($request->filled('search')) {
+            $search = (string) $request->string('search');
+
+            $query->where(function ($query) use ($search) {
+                $query->where('country', 'like', "%{$search}%")
+                    ->orWhere('click_id', 'like', "%{$search}%");
+            });
         }
 
         $device = $request->string('device')->value() ?: 'all';
@@ -105,13 +136,20 @@ class DashboardController extends Controller
     }
 
     /**
-     * Build the view stats for a single tracked page key.
+     * Build the view stats for a single tracked page key, optionally
+     * narrowed to visits from a given country (e.g. the Canada-specific
+     * template variants, which share the same page key as their default
+     * counterpart and are only distinguished by the visitor's country).
      *
      * @return array{total: int, today: int, last_viewed_at: ?string}
      */
-    private function statsFor(string $key): array
+    private function statsFor(string $key, ?string $country = null): array
     {
         $query = PageView::query()->forKey($key);
+
+        if ($country) {
+            $query->where('country', $country);
+        }
 
         return [
             'total' => (clone $query)->count(),

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\PageView;
+use App\Services\GeoLocator;
 
 test('visiting /articles logs a page view and redirects to the article template with an empty click_id', function () {
     $response = $this->get('/articles');
@@ -42,4 +43,28 @@ test('revisiting with the same click_id reuses the existing page view instead of
     $this->get('/articles?click_id=wf0ajvfrc6v8mv4ljohf3f4c');
 
     expect(PageView::query()->where('click_id', 'wf0ajvfrc6v8mv4ljohf3f4c')->count())->toBe(1);
+});
+
+test('visiting /articles from Canada redirects to the Canada article template', function () {
+    $this->mock(GeoLocator::class)->shouldReceive('countryCode')->andReturn('CA');
+
+    $response = $this->get('/articles');
+
+    $response->assertRedirect('/article-template-canada/index.html?click_id=');
+});
+
+test('visiting /prime-zone from Canada redirects to the Canada vortex template', function () {
+    $this->mock(GeoLocator::class)->shouldReceive('countryCode')->andReturn('CA');
+
+    $response = $this->get('/prime-zone');
+
+    $response->assertRedirect('/vortex-template-canada/index.html?click_id=');
+});
+
+test('visiting /articles from outside Canada redirects to the default article template', function () {
+    $this->mock(GeoLocator::class)->shouldReceive('countryCode')->andReturn('US');
+
+    $response = $this->get('/articles');
+
+    $response->assertRedirect('/article-template/index.html?click_id=');
 });

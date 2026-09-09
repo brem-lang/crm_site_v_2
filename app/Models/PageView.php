@@ -43,7 +43,7 @@ class PageView extends Model
             'key' => $key,
             'ip_address' => $ip,
             'user_agent' => $request->userAgent(),
-            'country' => static::resolveCountry($ip),
+            'country' => static::resolveCountryForRequest($request, $ip),
             'referer' => $request->headers->get('referer'),
         ];
 
@@ -71,6 +71,43 @@ class PageView extends Model
         static::where('click_id', $clickId)
             ->whereNull('converted_at')
             ->update(['converted_at' => now()]);
+    }
+
+    /**
+     * Resolve the country to record for this request.
+     *
+     * In local development, a real IP-geolocation lookup can't resolve a
+     * country for localhost/private IPs, so `?debug_country=CA` lets a
+     * developer simulate a visitor's country (e.g. to see the Canada
+     * template variants reflected in the dashboard) without needing an
+     * actual IP from that country. This override never applies outside the
+     * local environment.
+     *
+     * @see \App\Services\GeoLocator::countryCode() for the equivalent
+     *      override used to decide which template variant to redirect to.
+     */
+    protected static function resolveCountryForRequest(Request $request, ?string $ip): ?string
+    {
+        if (app()->environment('local') && $request->filled('debug_country')) {
+            return static::countryNameForCode((string) $request->string('debug_country'));
+        }
+
+        return static::resolveCountry($ip);
+    }
+
+    /**
+     * Map an ISO 3166-1 alpha-2 country code to the country name our real
+     * geolocation lookup would have stored, for the small set of countries
+     * this app cares about. Falls back to the raw code for anything else.
+     */
+    protected static function countryNameForCode(string $code): string
+    {
+        return match (strtoupper($code)) {
+            'CA' => 'Canada',
+            'GB' => 'United Kingdom',
+            'US' => 'United States',
+            default => strtoupper($code),
+        };
     }
 
     /**
