@@ -18,6 +18,19 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // The site is served through Cloudflare, so trust its proxying and
+        // read the real visitor IP from the forwarded headers it sets
+        // (rather than resolving to Cloudflare's own edge IP). This matters
+        // for anything based on $request->ip(), notably GeoLocator's
+        // country-by-IP detection used to preselect the signup phone code.
+        $middleware->trustProxies(
+            at: '*',
+            headers: Request::HEADER_X_FORWARDED_FOR
+                | Request::HEADER_X_FORWARDED_HOST
+                | Request::HEADER_X_FORWARDED_PORT
+                | Request::HEADER_X_FORWARDED_PROTO,
+        );
+
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
         $middleware->alias([

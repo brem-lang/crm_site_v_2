@@ -72,6 +72,15 @@ class GeoLocator
      */
     public function resolveClientIp(Request $request): ?string
     {
+        // Cloudflare sets this to the visitor's real IP directly, which is
+        // more reliable than the X-Forwarded-For chain (which can list
+        // multiple hops, or be absent if proxy trust isn't configured).
+        $cfIp = $request->header('CF-Connecting-IP');
+
+        if (is_string($cfIp) && filter_var($cfIp, FILTER_VALIDATE_IP) && $this->isPubliclyRoutable($cfIp)) {
+            return $cfIp;
+        }
+
         $ip = $request->ip();
 
         if ($ip && filter_var($ip, FILTER_VALIDATE_IP) && $this->isPubliclyRoutable($ip)) {
