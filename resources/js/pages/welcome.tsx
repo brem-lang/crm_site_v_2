@@ -1052,12 +1052,9 @@ function SignupForm() {
                         const body = await response.json().catch(() => null);
                         if (!response.ok || !body?.success) {
                             setLeadResult({ status: 'error' });
+                            setSubmitting(false);
                             return;
                         }
-                        setLeadResult({
-                            status: 'success',
-                            autologinUrl: body.autologin_url ?? null,
-                        });
 
                         // The click_id has now been consumed by this lead —
                         // clear it so a reload or a second submission from
@@ -1066,9 +1063,30 @@ function SignupForm() {
                         const url = new URL(window.location.href);
                         url.searchParams.delete('click_id');
                         window.history.replaceState(null, '', url.toString());
+
+                        const autologinUrl: string | null =
+                            body.autologin_url ?? null;
+
+                        if (autologinUrl) {
+                            // Redirect straight to the account — no modal.
+                            // Leave `submitting` true so the button stays
+                            // disabled while the browser navigates away.
+                            window.location.href = autologinUrl;
+                            return;
+                        }
+
+                        // No autologin URL to send them to — fall back to
+                        // the success modal.
+                        setLeadResult({
+                            status: 'success',
+                            autologinUrl: null,
+                        });
+                        setSubmitting(false);
                     })
-                    .catch(() => setLeadResult({ status: 'error' }))
-                    .finally(() => setSubmitting(false));
+                    .catch(() => {
+                        setLeadResult({ status: 'error' });
+                        setSubmitting(false);
+                    });
             }}
         >
             <h2>{t.signup.title}</h2>
