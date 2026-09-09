@@ -968,7 +968,7 @@ type LeadResult =
 
 function SignupForm() {
     const { t } = useTranslation();
-    const [countryCode, setCountryCode] = useState('PH');
+    const [countryCode, setCountryCode] = useState('GB');
     const [phoneValue, setPhoneValue] = useState('');
     const [phoneError, setPhoneError] = useState<string | null>(null);
     const [termsOpen, setTermsOpen] = useState(false);
@@ -993,7 +993,17 @@ function SignupForm() {
     useEffect(() => {
         const controller = new AbortController();
 
-        fetch('/geo/country-code', { signal: controller.signal })
+        // Forward ?debug_country, if present, so the local-only override
+        // (see GeoLocator::countryCode()) can be exercised end-to-end from
+        // the page URL without needing an actual IP from that country.
+        const debugCountry = new URLSearchParams(window.location.search).get(
+            'debug_country',
+        );
+        const url = debugCountry
+            ? `/geo/country-code?debug_country=${encodeURIComponent(debugCountry)}`
+            : '/geo/country-code';
+
+        fetch(url, { signal: controller.signal })
             .then((response) => (response.ok ? response.json() : null))
             .then((data: { country_code?: string | null } | null) => {
                 if (!data?.country_code || countryTouchedRef.current) return;
