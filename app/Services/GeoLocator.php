@@ -32,17 +32,8 @@ class GeoLocator
             return strtoupper((string) $request->string('debug_country'));
         }
 
-        // Cloudflare already resolves the visitor's country on every
-        // proxied request and hands it to us for free in this header — no
-        // network round-trip, no third-party API, no rate limit. "XX" means
-        // Cloudflare couldn't determine it and "T1" means Tor; treat both
-        // as unknown and fall through to the IP-based lookup below (which
-        // also covers local dev and any request that reaches us directly,
-        // bypassing Cloudflare).
-        $cfCountry = $request->header('CF-IPCountry');
-
-        if (is_string($cfCountry) && preg_match('/^[A-Za-z]{2}$/', $cfCountry) && ! in_array(strtoupper($cfCountry), ['XX', 'T1'], true)) {
-            return strtoupper($cfCountry);
+        if ($cfCountry = $this->cloudflareCountryCode($request)) {
+            return $cfCountry;
         }
 
         $ip = $this->resolveClientIp($request);
@@ -82,6 +73,34 @@ class GeoLocator
 
             return is_string($code) && strlen($code) === 2 ? strtoupper($code) : null;
         });
+    }
+
+    /**
+     * Read the visitor's country straight from Cloudflare, if this request
+     * was proxied through it.
+     *
+     * Cloudflare already resolves the visitor's country on every proxied
+     * request and hands it to us for free in this header — no network
+     * round-trip, no third-party API, no rate limit. "XX" means Cloudflare
+     * couldn't determine it and "T1" means Tor; both are treated as
+     * unknown (null), so callers fall back to an IP-based lookup, which
+     * also covers local dev and any request that reaches us directly,
+     * bypassing Cloudflare.
+     *
+     * @see \App\Models\PageView::resolveCountryForRequest() also uses this
+     *      to avoid an ip-api.com lookup when Cloudflare already knows.
+     */
+    public function cloudflareCountryCode(Request $request): ?string
+    {
+        $cfCountry = $request->header('CF-IPCountry');
+
+        if (! is_string($cfCountry) || ! preg_match('/^[A-Za-z]{2}$/', $cfCountry)) {
+            return null;
+        }
+
+        $cfCountry = strtoupper($cfCountry);
+
+        return in_array($cfCountry, ['XX', 'T1'], true) ? null : $cfCountry;
     }
 
     /**

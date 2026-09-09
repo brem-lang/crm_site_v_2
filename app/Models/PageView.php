@@ -78,11 +78,13 @@ class PageView extends Model
      * Resolve the country to record for this request.
      *
      * `?debug_country=CA` still lets a developer force a specific country
-     * (local environment only). Otherwise this resolves the country for
-     * whichever IP GeoLocator::resolveClientIp() decides is the real one —
-     * the actual client IP in production, or (in local development) the
-     * developer's real public IP, so the two stay in agreement about which
-     * IP is being geolocated.
+     * (local environment only). Otherwise this prefers Cloudflare's
+     * CF-IPCountry header (see GeoLocator::cloudflareCountryCode()) so
+     * logging a page view doesn't cost an ip-api.com lookup when Cloudflare
+     * already told us the country; only falls back to geolocating whichever
+     * IP GeoLocator::resolveClientIp() decides is the real one — the actual
+     * client IP in production, or (in local development) the developer's
+     * real public IP — when that header is missing or unknown.
      *
      * @see \App\Services\GeoLocator::countryCode() for the equivalent
      *      override used to decide which template variant to redirect to.
@@ -93,22 +95,31 @@ class PageView extends Model
             return static::countryNameForCode((string) $request->string('debug_country'));
         }
 
-        return static::resolveCountry(app(GeoLocator::class)->resolveClientIp($request));
+        $geoLocator = app(GeoLocator::class);
+
+        if ($cfCountry = $geoLocator->cloudflareCountryCode($request)) {
+            return static::countryNameForCode($cfCountry);
+        }
+
+        return static::resolveCountry($geoLocator->resolveClientIp($request));
     }
 
     /**
      * Map an ISO 3166-1 alpha-2 country code to the country name our real
-     * geolocation lookup would have stored, for the small set of countries
-     * this app cares about. Falls back to the raw code for anything else.
+     * geolocation lookup (ip-api.com's `country` field) would have stored,
+     * so a value read from CF-IPCountry or ?debug_country lands in this
+     * column in the same format regardless of which path produced it.
+     * `Locale::getDisplayRegion()` (the intl extension) already agrees with
+     * ip-api.com on the names this app cares about (e.g. "Canada", "United
+     * Kingdom"), and covers every other country the same way. Falls back to
+     * the raw code if it can't resolve one (e.g. a bogus ?debug_country).
      */
     protected static function countryNameForCode(string $code): string
     {
-        return match (strtoupper($code)) {
-            'CA' => 'Canada',
-            'GB' => 'United Kingdom',
-            'US' => 'United States',
-            default => strtoupper($code),
-        };
+        $code = strtoupper($code);
+        $name = \Locale::getDisplayRegion("und-{$code}", 'en');
+
+        return $name !== '' && $name !== $code ? $name : $code;
     }
 
     /**
