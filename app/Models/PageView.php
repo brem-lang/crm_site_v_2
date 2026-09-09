@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\GeoLocator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -43,7 +44,7 @@ class PageView extends Model
             'key' => $key,
             'ip_address' => $ip,
             'user_agent' => $request->userAgent(),
-            'country' => static::resolveCountryForRequest($request, $ip),
+            'country' => static::resolveCountryForRequest($request),
             'referer' => $request->headers->get('referer'),
         ];
 
@@ -76,23 +77,23 @@ class PageView extends Model
     /**
      * Resolve the country to record for this request.
      *
-     * In local development, a real IP-geolocation lookup can't resolve a
-     * country for localhost/private IPs, so `?debug_country=CA` lets a
-     * developer simulate a visitor's country (e.g. to see the Canada
-     * template variants reflected in the dashboard) without needing an
-     * actual IP from that country. This override never applies outside the
-     * local environment.
+     * `?debug_country=CA` still lets a developer force a specific country
+     * (local environment only). Otherwise this resolves the country for
+     * whichever IP GeoLocator::resolveClientIp() decides is the real one —
+     * the actual client IP in production, or (in local development) the
+     * developer's real public IP, so the two stay in agreement about which
+     * IP is being geolocated.
      *
      * @see \App\Services\GeoLocator::countryCode() for the equivalent
      *      override used to decide which template variant to redirect to.
      */
-    protected static function resolveCountryForRequest(Request $request, ?string $ip): ?string
+    protected static function resolveCountryForRequest(Request $request): ?string
     {
         if (app()->environment('local') && $request->filled('debug_country')) {
             return static::countryNameForCode((string) $request->string('debug_country'));
         }
 
-        return static::resolveCountry($ip);
+        return static::resolveCountry(app(GeoLocator::class)->resolveClientIp($request));
     }
 
     /**

@@ -18,9 +18,10 @@ class GeoLocator
      * commonly block third-party IP-geolocation domains, and so it uses the
      * IP address as the server sees it.
      *
-     * In local development, a real lookup can't resolve a country for
-     * localhost/private IPs, so `?debug_country=CA` lets a developer
-     * simulate a visitor's country instead. Never applies outside local.
+     * In local development, `?debug_country=CA` still lets a developer
+     * force a specific country. But by default (no override), this now
+     * resolves against the real client IP wherever possible — see
+     * resolveClientIp().
      *
      * @see \App\Models\PageView::resolveCountryForRequest() for the
      *      equivalent override used when recording the page view.
@@ -31,9 +32,9 @@ class GeoLocator
             return strtoupper((string) $request->string('debug_country'));
         }
 
-        $ip = $request->ip();
+        $ip = $this->resolveClientIp($request);
 
-        if (! $ip || ! filter_var($ip, FILTER_VALIDATE_IP) || ! $this->isPubliclyRoutable($ip)) {
+        if (! $ip) {
             return null;
         }
 
@@ -55,6 +56,48 @@ class GeoLocator
             $code = $response->json('country_code');
 
             return is_string($code) && strlen($code) === 2 ? strtoupper($code) : null;
+        });
+    }
+
+    /**
+     * Resolve the IP address to use for geolocation.
+     *
+     * In production this is always just the real client IP Laravel
+     * resolved from the request. In local development, that's always a
+     * private/loopback address (127.0.0.1 or a LAN IP), which no
+     * geolocation provider can resolve — so instead we look up the
+     * machine's actual public IP (via a "what's my IP" service, cached so
+     * we're not hitting it on every request) and geolocate that, letting a
+     * developer's real location resolve without any manual override.
+     */
+    public function resolveClientIp(Request $request): ?string
+    {
+        $ip = $request->ip();
+
+        if ($ip && filter_var($ip, FILTER_VALIDATE_IP) && $this->isPubliclyRoutable($ip)) {
+            return $ip;
+        }
+
+        if (! app()->environment('local')) {
+            return null;
+        }
+
+        return Cache::remember('geo:local-public-ip', now()->addMinutes(30), function () {
+            try {
+                $response = Http::timeout(3)->get('https://api.ipify.org', ['format' => 'json']);
+            } catch (\Throwable $e) {
+                Log::warning('geo: local public IP lookup failed', ['message' => $e->getMessage()]);
+
+                return null;
+            }
+
+            if ($response->failed()) {
+                return null;
+            }
+
+            $publicIp = $response->json('ip');
+
+            return is_string($publicIp) && filter_var($publicIp, FILTER_VALIDATE_IP) ? $publicIp : null;
         });
     }
 
