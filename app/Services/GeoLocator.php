@@ -39,21 +39,31 @@ class GeoLocator
         }
 
         return Cache::remember("geo:country:{$ip}", now()->addHours(6), function () use ($ip) {
+            // ip-api.com's free tier (no signup/key needed, HTTP only, ~45
+            // req/min from this server's IP) — switched from ipapi.co,
+            // whose free quota was exhausted and returning 429 for every
+            // lookup.
             try {
-                $response = Http::timeout(3)->get("https://ipapi.co/{$ip}/json/");
+                $response = Http::timeout(3)->get("http://ip-api.com/json/{$ip}", [
+                    'fields' => 'status,countryCode',
+                ]);
             } catch (\Throwable $e) {
                 Log::warning('geo: ip lookup request failed', ['ip' => $ip, 'message' => $e->getMessage()]);
 
                 return null;
             }
 
-            if ($response->failed()) {
-                Log::warning('geo: ip lookup returned an error', ['ip' => $ip, 'status' => $response->status()]);
+            if ($response->failed() || $response->json('status') !== 'success') {
+                Log::warning('geo: ip lookup returned an error', [
+                    'ip' => $ip,
+                    'status' => $response->status(),
+                    'body' => $response->json('status'),
+                ]);
 
                 return null;
             }
 
-            $code = $response->json('country_code');
+            $code = $response->json('countryCode');
 
             return is_string($code) && strlen($code) === 2 ? strtoupper($code) : null;
         });
