@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PageView;
+use App\Services\GeoLocator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 
 class SubmitLeadController extends Controller
 {
-    public function store(Request $request): JsonResponse
+    public function store(Request $request, GeoLocator $geoLocator): JsonResponse
     {
         $validated = $request->validate([
             'firstname' => ['required', 'string', 'max:255'],
@@ -24,7 +25,7 @@ class SubmitLeadController extends Controller
         $payload = [
             ...$validated,
             'country_code' => strtoupper($validated['country_code']),
-            'ip_address' => $request->ip(),
+            'ip_address' => $geoLocator->resolveClientIp($request),
         ];
 
         try {

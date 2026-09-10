@@ -18,7 +18,7 @@ class AdminUserSeeder extends Seeder
     {
 
         $user = User::updateOrCreate(
-            ['email' => 'admin@nullyptoai.online'],
+            ['email' => 'admin@nullyptoai.store'],
             [
                 'name' => 'Admin',
                 'password' => Hash::make('password'),

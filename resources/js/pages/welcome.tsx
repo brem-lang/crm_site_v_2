@@ -1577,8 +1577,8 @@ function SiteFooter() {
                     </div>
                     <div className="nullypto-foot-col">
                         <h4>{t.footer.contactColHeader}</h4>
-                        <a href="mailto:support@nullyptoai.online">
-                            support@nullyptoai.online
+                        <a href="mailto:support@nullyptoai.store">
+                            support@nullyptoai.store
                         </a>
                         <span
                             style={{
