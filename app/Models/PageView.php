@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Services\GeoLocator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -24,7 +25,54 @@ class PageView extends Model
         'user_agent',
         'country',
         'referer',
+        'visitor_session_id',
+        'visitor_id',
+        'sequence_number',
+        'page_path',
+        'full_url',
+        'entered_at',
+        'left_at',
+        'time_spent_seconds',
+        'scroll_depth_max',
+        'load_time_ms',
+        'is_entry',
+        'is_exit',
+        'device_type',
+        'browser',
+        'os',
     ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * A plain $casts property rather than the casts() method Laravel also
+     * supports — Larastan's static analysis reads this reliably, whereas
+     * it doesn't always pick up a method-based cast map.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'entered_at' => 'datetime',
+        'left_at' => 'datetime',
+        'is_entry' => 'boolean',
+        'is_exit' => 'boolean',
+    ];
+
+    /**
+     * @return BelongsTo<VisitorSession, $this>
+     */
+    public function visitorSession(): BelongsTo
+    {
+        return $this->belongsTo(VisitorSession::class);
+    }
+
+    /**
+     * @return BelongsTo<Visitor, $this>
+     */
+    public function visitor(): BelongsTo
+    {
+        return $this->belongsTo(Visitor::class);
+    }
 
     /**
      * Log a view of the given page for the current request.
@@ -34,8 +82,13 @@ class PageView extends Model
      * generating a fresh one, and firstOrCreate keeps a repeat hit on the
      * same click_id (e.g. a page reload) idempotent instead of tripping the
      * column's unique constraint.
+     *
+     * When a VisitorSession is available (the normal case — see
+     * App\Http\Middleware\TrackPageView), this also stamps the view's
+     * position within that session and rolls the session's page count and
+     * entry/exit pointers forward.
      */
-    public static function record(string $key, Request $request): self
+    public static function record(string $key, Request $request, ?VisitorSession $session = null): self
     {
         $ip = $request->ip();
         $clickId = $request->query('click_id');
@@ -48,11 +101,37 @@ class PageView extends Model
             'referer' => $request->headers->get('referer'),
         ];
 
-        if ($clickId) {
-            return static::firstOrCreate(['click_id' => $clickId], $attributes);
+        if ($session) {
+            $attributes = [
+                ...$attributes,
+                'visitor_session_id' => $session->id,
+                'visitor_id' => $session->visitor_id,
+                'sequence_number' => $session->pages_viewed + 1,
+                'page_path' => $request->path(),
+                'full_url' => $request->fullUrl(),
+                'entered_at' => now(),
+                'is_entry' => $session->pages_viewed === 0,
+                'device_type' => $session->device_type,
+                'browser' => $session->browser,
+                'os' => $session->os,
+            ];
         }
 
-        return static::create($attributes);
+        $view = $clickId
+            ? static::firstOrCreate(['click_id' => $clickId], $attributes)
+            : static::create($attributes);
+
+        if ($session && $view->wasRecentlyCreated) {
+            $session->increment('pages_viewed');
+
+            $updates = ['exit_page_view_id' => $view->id];
+            if ($session->pages_viewed === 1) {
+                $updates['entry_page_view_id'] = $view->id;
+            }
+            $session->forceFill($updates)->save();
+        }
+
+        return $view;
     }
 
     /**
@@ -86,7 +165,7 @@ class PageView extends Model
      * client IP in production, or (in local development) the developer's
      * real public IP — when that header is missing or unknown.
      *
-     * @see \App\Services\GeoLocator::countryCode() for the equivalent
+     * @see GeoLocator::countryCode() for the equivalent
      *      override used to decide which template variant to redirect to.
      */
     protected static function resolveCountryForRequest(Request $request): ?string

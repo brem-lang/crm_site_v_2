@@ -33,6 +33,17 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
+        // These are fire-and-forget analytics beacons (public/js/tracker.js,
+        // resources/js/lib/tracker.ts) sent via navigator.sendBeacon on tab
+        // hide/page unload, which can't attach a custom CSRF header. They
+        // don't mutate anything sensitive — just visitor/session tracking
+        // rows — so exempting them is the same trade-off analytics
+        // endpoints like this always make.
+        $middleware->validateCsrfTokens(except: [
+            't/client-info',
+            't/event',
+        ]);
+
         $middleware->alias([
             'admin' => EnsureUserIsAdmin::class,
             'track.view' => TrackPageView::class,

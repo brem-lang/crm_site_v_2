@@ -1627,6 +1627,7 @@ export default function Welcome() {
         return () => clearTimeout(id);
     }, []);
 
+
     return (
         <LanguageContext.Provider
             value={{
@@ -1635,7 +1636,13 @@ export default function Welcome() {
                 t: getTranslation(languageCode),
             }}
         >
-            <Head title="Nullypto — Quantum-Accelerated AI Trading" />
+            <Head title="Nullypto — Quantum-Accelerated AI Trading">
+                {/* Visitor/session journey & engagement tracking — see
+                    public/js/tracker.js. Shared with the static
+                    ad-template pages instead of a React-specific
+                    reimplementation. */}
+                <script src="/js/tracker.js" defer />
+            </Head>
             <div className="nullypto-page">
                 {showRiskWarning && (
                     <RiskWarningBar

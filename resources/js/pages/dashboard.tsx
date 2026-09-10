@@ -1,6 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -47,6 +48,10 @@ type Visit = {
     browser: string;
     device: string;
     created_at: string;
+    visitor_session_id: number | null;
+    risk_score: number | null;
+    risk_reasons: string[];
+    is_suspicious: boolean;
 };
 
 type PaginationLink = {
@@ -72,7 +77,16 @@ type VisitFilters = {
     search: string | null;
     from: string | null;
     to: string | null;
+    suspicious_only: boolean;
     per_page: number;
+};
+
+const riskReasonLabels: Record<string, string> = {
+    bot_user_agent: 'Bot-like user agent',
+    proxy_or_vpn: 'Proxy/VPN IP',
+    hosting_provider: 'Datacenter/hosting IP',
+    repeated_ip: 'Many visits from this IP',
+    fast_form_submission: 'Form submitted unusually fast',
 };
 
 type DashboardProps = {
@@ -193,6 +207,7 @@ export default function Dashboard({
                 search: next.search || undefined,
                 from: next.from || undefined,
                 to: next.to || undefined,
+                suspicious_only: next.suspicious_only || undefined,
                 per_page: next.per_page,
             },
             { preserveState: true, preserveScroll: true, replace: true },
@@ -361,6 +376,24 @@ export default function Dashboard({
                                     className="h-8 w-40"
                                 />
                             </div>
+
+                            <div className="flex items-center gap-2 pb-1.5">
+                                <Checkbox
+                                    id="suspicious_only"
+                                    checked={filters.suspicious_only}
+                                    onCheckedChange={(checked) =>
+                                        updateFilters({
+                                            suspicious_only: checked === true,
+                                        })
+                                    }
+                                />
+                                <Label
+                                    htmlFor="suspicious_only"
+                                    className="text-xs font-normal"
+                                >
+                                    Suspicious only
+                                </Label>
+                            </div>
                         </div>
 
                         {/* Table */}
@@ -388,6 +421,9 @@ export default function Dashboard({
                                         </th>
                                         <th className="px-4 py-2 font-medium">
                                             Visited
+                                        </th>
+                                        <th className="px-4 py-2 font-medium">
+                                            Risk
                                         </th>
                                         <th className="px-4 py-2 font-medium">
                                             <span className="sr-only">
@@ -438,6 +474,41 @@ export default function Dashboard({
                                                         visit.created_at,
                                                     ).toLocaleString()}
                                                 </td>
+                                                <td className="px-4 py-2">
+                                                    {visit.risk_score ===
+                                                    null ? (
+                                                        <span className="text-muted-foreground">
+                                                            —
+                                                        </span>
+                                                    ) : (
+                                                        <Badge
+                                                            variant={
+                                                                visit.is_suspicious
+                                                                    ? 'destructive'
+                                                                    : 'outline'
+                                                            }
+                                                            className="font-normal"
+                                                            title={
+                                                                visit.risk_reasons
+                                                                    .map(
+                                                                        (
+                                                                            reason,
+                                                                        ) =>
+                                                                            riskReasonLabels[
+                                                                                reason
+                                                                            ] ??
+                                                                            reason,
+                                                                    )
+                                                                    .join(
+                                                                        ', ',
+                                                                    ) ||
+                                                                undefined
+                                                            }
+                                                        >
+                                                            {visit.risk_score}
+                                                        </Badge>
+                                                    )}
+                                                </td>
                                                 <td className="px-4 py-2 text-right">
                                                     <DropdownMenu>
                                                         <DropdownMenuTrigger
@@ -452,6 +523,17 @@ export default function Dashboard({
                                                             </Button>
                                                         </DropdownMenuTrigger>
                                                         <DropdownMenuContent align="end">
+                                                            {visit.visitor_session_id && (
+                                                                <DropdownMenuItem
+                                                                    asChild
+                                                                >
+                                                                    <Link
+                                                                        href={`/dashboard/sessions/${visit.visitor_session_id}`}
+                                                                    >
+                                                                        View journey
+                                                                    </Link>
+                                                                </DropdownMenuItem>
+                                                            )}
                                                             <DropdownMenuItem
                                                                 onSelect={() =>
                                                                     navigator.clipboard?.writeText(
@@ -497,7 +579,7 @@ export default function Dashboard({
                                     {recentVisits.data.length === 0 && (
                                         <tr>
                                             <td
-                                                colSpan={8}
+                                                colSpan={9}
                                                 className="text-muted-foreground px-4 py-6 text-center"
                                             >
                                                 No visits yet.

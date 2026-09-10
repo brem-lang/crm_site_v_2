@@ -1,0 +1,8 @@
+Visit: Visit ID, Visitor ID, Session ID, date/time arrived, date/time left, total session duration, first-time vs returning visitor, number of previous visits, pages viewed, and time spent on each page.
+• Where they came from: Referrer URL, referrer domain, traffic source (Direct / Google / Facebook / Instagram / SMS / Telegram / affiliate / etc.), UTM source/medium/campaign/content/term, campaign ID, affiliate ID, external click ID, and search keyword when actually available.
+• Location: IP address, country, region/state, city, timezone, ISP/network/ASN, and mobile carrier when available. City from IP should be treated as approximate, not exact GPS location.
+• Device: Mobile / desktop / tablet, device brand/model when detectable, operating system + version, browser + version, user agent, screen resolution, viewport size, browser language, and preferred site language.
+• Journey on the website: Entry page, every page visited in order, previous/next page, exit page, time spent per page, total pages viewed, buttons/CTAs clicked, links clicked, form opened, form started, form errors, form submitted, phone/WhatsApp/Telegram clicks, and thank-you/conversion page reached.
+• Engagement: Scroll depth (25% / 50% / 75% / 100%), active engagement time, idle time, tab hidden/visible, session duration, number of interactions, and optionally video start/progress/complete if your pages contain video.
+• Technical: Full landing URL, URL parameters, hostname, page path, page load/performance metrics, JavaScript enabled, cookie/consent status, and error events.
+• Traffic quality: Bot/crawler detection, VPN/proxy/datacenter/Tor indicators, suspicious visit flag, repeated visits from the same visitor/IP, unusually fast actions, and risk score if you build one.

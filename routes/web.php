@@ -1,15 +1,20 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\GeoController;
+use App\Http\Controllers\SessionJourneyController;
 use App\Http\Controllers\SubmitLeadController;
+use App\Http\Controllers\TrackingController;
 use App\Services\GeoLocator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 // Welcome page
-Route::inertia('/nullypto', 'welcome')->name('home');
+Route::inertia('/nullypto', 'welcome')
+    ->middleware('track.view:nullypto')
+    ->name('home');
 
 Route::get('/', function (Request $request, GeoLocator $geoLocator) {
     // Split articles/prime-zone traffic evenly, but keep a separate
@@ -46,20 +51,15 @@ Route::get('/', function (Request $request, GeoLocator $geoLocator) {
         return $isEven ? '/articles' : '/prime-zone';
     });
 
-    // Preserve query params that need to survive the internal
-    // landing-split redirect: click_id, forwarded from an upstream
-    // ad-tracking redirect (e.g. koventrax), and debug_country, the
-    // local-only override for simulating a visitor's country (see
-    // GeoLocator::countryCode()) — without forwarding it here, a bucket
-    // decided by debug_country would land on /articles or /prime-zone
-    // with no way to tell them to keep simulating that country.
-    $forwardedParams = array_filter([
-        'click_id' => $request->query('click_id'),
-        'debug_country' => $request->query('debug_country'),
-    ]);
-
-    if ($forwardedParams) {
-        $destination .= '?'.http_build_query($forwardedParams);
+    // Preserve every query param on the internal landing-split redirect —
+    // click_id (forwarded from an upstream ad-tracking redirect, e.g.
+    // koventrax), debug_country (the local-only override for simulating a
+    // visitor's country, see GeoLocator::countryCode()), and any UTM/
+    // campaign params an ad network attached to the original landing URL,
+    // so VisitorIdentityService still sees them once the request reaches
+    // /articles or /prime-zone.
+    if ($queryString = $request->getQueryString()) {
+        $destination .= '?'.$queryString;
     }
 
     return redirect($destination);
@@ -69,12 +69,23 @@ Route::post('/submit-lead', [SubmitLeadController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('submit-lead');
 
+Route::post('/t/client-info', [TrackingController::class, 'clientInfo'])
+    ->middleware('throttle:60,1')
+    ->name('tracking.client-info');
+
+Route::post('/t/event', [EventController::class, 'store'])
+    ->middleware('throttle:120,1')
+    ->name('tracking.event');
+
 Route::get('/geo/country-code', [GeoController::class, 'countryCode'])
     ->middleware('throttle:30,1')
     ->name('geo.country-code');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('dashboard/sessions/{visitorSession}', [SessionJourneyController::class, 'show'])
+        ->name('dashboard.sessions.show');
 });
 
 Route::get('/articles', function (Request $request, GeoLocator $geoLocator) {

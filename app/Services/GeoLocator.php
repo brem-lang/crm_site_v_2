@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\PageView;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -23,7 +24,7 @@ class GeoLocator
      * resolves against the real client IP wherever possible — see
      * resolveClientIp().
      *
-     * @see \App\Models\PageView::resolveCountryForRequest() for the
+     * @see PageView::resolveCountryForRequest() for the
      *      equivalent override used when recording the page view.
      */
     public function countryCode(Request $request): ?string
@@ -87,7 +88,7 @@ class GeoLocator
      * also covers local dev and any request that reaches us directly,
      * bypassing Cloudflare.
      *
-     * @see \App\Models\PageView::resolveCountryForRequest() also uses this
+     * @see PageView::resolveCountryForRequest() also uses this
      *      to avoid an ip-api.com lookup when Cloudflare already knows.
      */
     public function cloudflareCountryCode(Request $request): ?string
@@ -157,5 +158,91 @@ class GeoLocator
     private function isPubliclyRoutable(string $ip): bool
     {
         return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false;
+    }
+
+    /**
+     * Resolve the richer set of free geo/network details ip-api.com's free
+     * tier exposes for the given IP: region, city, timezone, ISP, ASN, and
+     * (best-effort, no paid provider) mobile-carrier/proxy/hosting flags —
+     * used to populate VisitorSession's location and traffic-quality
+     * columns. Cached per IP alongside the simpler country-only lookups
+     * this class already does; only a successful lookup is cached, so a
+     * failed attempt can retry live on the next request for that IP.
+     *
+     * Cloudflare's CF-IPCountry header still wins for the country itself
+     * when available (see cloudflareCountryCode()) since it's free and
+     * doesn't cost an ip-api.com request.
+     *
+     * @return array<string, string|bool|null>
+     */
+    public function geoDetails(Request $request, ?string $ip): array
+    {
+        $empty = [
+            'country' => null, 'country_code' => null, 'region' => null,
+            'city' => null, 'timezone' => null, 'isp' => null, 'asn' => null,
+            'mobile' => null, 'proxy' => null, 'hosting' => null,
+        ];
+
+        $details = $ip ? $this->lookupGeoDetails($ip) : null;
+        $details = $details ? [...$empty, ...$details] : $empty;
+
+        // Prefer Cloudflare's own country signal over ip-api.com's when
+        // both are available — it's free, instant, and already what the
+        // rest of the app treats as authoritative.
+        if ($cfCountry = $this->cloudflareCountryCode($request)) {
+            $details['country_code'] = $cfCountry;
+        }
+
+        return $details;
+    }
+
+    /**
+     * @return array<string, string|bool|null>|null
+     */
+    private function lookupGeoDetails(string $ip): ?array
+    {
+        if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+            return null;
+        }
+
+        $cacheKey = "geo:details:{$ip}";
+
+        if (! is_null($cached = Cache::get($cacheKey))) {
+            return $cached;
+        }
+
+        try {
+            // Free tier, no signup/key needed (~45 req/min from this
+            // server's IP) — proxy/hosting/mobile are included in the free
+            // field set too, just not returned unless explicitly requested.
+            $response = Http::timeout(3)->retry(2, 200)->get("http://ip-api.com/json/{$ip}", [
+                'fields' => 'status,country,countryCode,regionName,city,timezone,isp,as,mobile,proxy,hosting',
+            ]);
+        } catch (\Throwable $e) {
+            Log::warning('geo: extended ip lookup failed', ['ip' => $ip, 'message' => $e->getMessage()]);
+
+            return null;
+        }
+
+        if ($response->failed() || $response->json('status') !== 'success') {
+            return null;
+        }
+
+        $details = [
+            'country' => $response->json('country'),
+            'country_code' => $response->json('countryCode'),
+            'region' => $response->json('regionName'),
+            'city' => $response->json('city'),
+            'timezone' => $response->json('timezone'),
+            'isp' => $response->json('isp'),
+            'asn' => $response->json('as'),
+            'mobile' => $response->json('mobile'),
+            'proxy' => $response->json('proxy'),
+            'hosting' => $response->json('hosting'),
+        ];
+
+        Cache::put($cacheKey, $details, now()->addDay());
+
+        return $details;
     }
 }

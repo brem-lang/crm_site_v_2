@@ -48,7 +48,9 @@ test('revisiting with the same click_id reuses the existing page view instead of
 test('visiting /articles from Canada redirects to the Canada article template', function () {
     $this->mock(GeoLocator::class)
         ->shouldReceive('countryCode')->andReturn('CA')
-        ->shouldReceive('resolveClientIp')->andReturn(null);
+        ->shouldReceive('resolveClientIp')->andReturn(null)
+        ->shouldReceive('geoDetails')->andReturn([])
+        ->shouldReceive('cloudflareCountryCode')->andReturn(null);
 
     $response = $this->get('/articles');
 
@@ -58,7 +60,9 @@ test('visiting /articles from Canada redirects to the Canada article template', 
 test('visiting /prime-zone from Canada redirects to the Canada vortex template', function () {
     $this->mock(GeoLocator::class)
         ->shouldReceive('countryCode')->andReturn('CA')
-        ->shouldReceive('resolveClientIp')->andReturn(null);
+        ->shouldReceive('resolveClientIp')->andReturn(null)
+        ->shouldReceive('geoDetails')->andReturn([])
+        ->shouldReceive('cloudflareCountryCode')->andReturn(null);
 
     $response = $this->get('/prime-zone');
 
@@ -68,7 +72,9 @@ test('visiting /prime-zone from Canada redirects to the Canada vortex template',
 test('visiting /articles from outside Canada redirects to the default article template', function () {
     $this->mock(GeoLocator::class)
         ->shouldReceive('countryCode')->andReturn('US')
-        ->shouldReceive('resolveClientIp')->andReturn(null);
+        ->shouldReceive('resolveClientIp')->andReturn(null)
+        ->shouldReceive('geoDetails')->andReturn([])
+        ->shouldReceive('cloudflareCountryCode')->andReturn(null);
 
     $response = $this->get('/articles');
 
